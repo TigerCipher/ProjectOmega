@@ -15,29 +15,30 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: main.cpp
+// File Name: game.h
 // Date File Created: 10/21/2022
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
+#pragma once
 
-#include <iostream>
-
-#include "omega/core/game.h"
-
-int main(int argc, char **argv)
+namespace omega
 {
-    std::cout << "Hello World!\n";
-    auto* game = new omega::game();
-    if(!game->initialize())
-    {
-        std::cerr << "Something went wrong!\n";
-        return -1;
-    }
-    game->run();
+class game
+{
+  public:
+    game();
 
-    game->shutdown();
+    bool initialize();
+    void run();
+    void shutdown();
 
-    delete game;
-    return 0;
-}
+  private:
+    void process_input();
+    void update();
+    void render();
+
+    // TODO: Pointer to window
+    bool m_running = false;
+};
+} // namespace omega
