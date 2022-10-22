@@ -21,6 +21,7 @@
 //
 // ------------------------------------------------------------------------------
 #pragma once
+#include "common.h"
 
 
 struct SDL_Window;
@@ -47,5 +48,14 @@ class game
 
     // Temporary
     SDL_Renderer* m_renderer;
+    struct vec2
+    {
+        float x;
+        float y;
+    };
+    vec2 m_ball_pos;
+    vec2 m_paddle_pos;
+    u32 m_ticks = 0;
+    s32 m_paddle_dir = 0;
 };
 } // namespace omega
