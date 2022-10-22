@@ -23,17 +23,61 @@
 
 #include "game.h"
 
+#include <SDL2/SDL.h>
+
+#include <iostream>
+
 namespace omega
 {
-game::game() : m_running(true) {}
+game::game() : m_window(nullptr), m_running(true) {}
 
-bool game::initialize() { return true; }
+bool game::initialize()
+{
+    int err = SDL_Init(SDL_INIT_VIDEO);
+    if(err)
+    {
+        std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
+        return false;
+    }
+    m_window = SDL_CreateWindow("Project Omega", 200, 200, 1000, 800, 0);
 
-void game::run() {}
+    if(!m_window)
+    {
+        std::cerr << "Failed to create window: " << SDL_GetError() << std::endl;
+        return false;
+    }
+    return true;
+}
 
-void game::shutdown() {}
+void game::run()
+{
+    while(m_running)
+    {
+        process_input();
+        update();
+        render();
+    }
+}
 
-void game::process_input() {}
+void game::shutdown()
+{
+    SDL_DestroyWindow(m_window);
+    SDL_Quit();
+}
+
+void game::process_input()
+{
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
+    {
+        switch(event.type)
+        {
+        case SDL_QUIT:
+            m_running = false;
+            break;
+        }
+    }
+}
 
 void game::update() {}
 

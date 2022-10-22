@@ -28,8 +28,8 @@
 int main(int argc, char **argv)
 {
     std::cout << "Hello World!\n";
-    auto* game = new omega::game();
-    if(!game->initialize())
+    auto *game = new omega::game();
+    if (!game->initialize())
     {
         std::cerr << "Something went wrong!\n";
         return -1;

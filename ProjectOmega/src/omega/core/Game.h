@@ -22,6 +22,9 @@
 // ------------------------------------------------------------------------------
 #pragma once
 
+
+struct SDL_Window;
+
 namespace omega
 {
 class game
@@ -38,7 +41,7 @@ class game
     void update();
     void render();
 
-    // TODO: Pointer to window
-    bool m_running = false;
+    SDL_Window *m_window;
+    bool        m_running = false;
 };
 } // namespace omega
