@@ -22,15 +22,23 @@
 // ------------------------------------------------------------------------------
 
 #include "game.h"
-#include "common.h"
 
 #include <SDL2/SDL.h>
 
 #include <iostream>
 
+namespace
+{
+s32 thickness     = 15;
+s32 window_width  = 1000;
+s32 window_height = 800;
+} // namespace
+
 namespace omega
 {
-game::game() : m_window(nullptr), m_running(true), m_ball_pos(1000.0f / 2.0f, 800.0f / 2.0f), m_paddle_pos(0.0f, 800.0f / 2.0f) {}
+game::game() :
+    m_window(nullptr), m_running(true), m_ball_pos(1000.0f / 2.0f, 800.0f / 2.0f), m_paddle_pos(0.0f, 800.0f / 2.0f)
+{}
 
 bool game::initialize()
 {
@@ -40,7 +48,7 @@ bool game::initialize()
         std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
         return false;
     }
-    m_window = SDL_CreateWindow("Project Omega", 200, 200, 1000, 800, 0);
+    m_window = SDL_CreateWindow("Project Omega", 200, 200, window_width, window_height, 0);
 
     if (!m_window)
     {
@@ -90,28 +98,37 @@ void game::process_input()
     if (key_state [ SDL_SCANCODE_ESCAPE ]) m_running = false;
 
     m_paddle_dir = 0;
-    if (key_state[SDL_SCANCODE_W]) --m_paddle_dir;
-    if (key_state[SDL_SCANCODE_S]) ++m_paddle_dir;
-
+    if (key_state [ SDL_SCANCODE_W ]) --m_paddle_dir;
+    if (key_state [ SDL_SCANCODE_S ]) ++m_paddle_dir;
 }
 
 void game::update()
 {
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), m_ticks + 16));
+    while (!SDL_TICKS_PASSED(SDL_GetTicks(), m_ticks + 16))
+        ;
 
     float delta = (SDL_GetTicks() - m_ticks) / 1000.0f;
-    m_ticks = SDL_GetTicks();
+    m_ticks     = SDL_GetTicks();
 
     if (delta > 0.05f) delta = 0.0f;
 
-    if(m_paddle_dir)
+    if (m_paddle_dir)
     {
         m_paddle_pos.y += m_paddle_dir * 300.0f * delta;
-        if (m_paddle_pos.y < 100 / 2.0f + 15) // paddle height / 2 + paddle width
-            m_paddle_pos.y = 100 / 2.0f + 15;
-        else if (m_paddle_pos.y > 800 - 100 / 2.0f - 15)
+        if (m_paddle_pos.y < 100 / 2.0f + thickness) // paddle height / 2 + paddle width
+            m_paddle_pos.y = 100 / 2.0f + thickness;
+        else if (m_paddle_pos.y > 800 - 100 / 2.0f - thickness)
             m_paddle_pos.y = 800 - 100 / 2.0f - 15;
     }
+
+    m_ball_pos.x += m_ball_vel.x * delta;
+    m_ball_pos.y += m_ball_vel.y * delta;
+
+    if (m_ball_pos.y <= thickness && m_ball_vel.y < 0) m_ball_vel.y = -m_ball_vel.y;
+    if (m_ball_pos.y >= window_height - thickness && m_ball_vel.y > 0) m_ball_vel.y = -m_ball_vel.y;
+    float diff = abs(m_ball_pos.y - m_paddle_pos.y);
+    if (diff <= 100 / 2.0f && m_ball_pos.x <= 25.0f && m_ball_pos.x >= 20.0f && m_ball_vel.x < 0)
+        m_ball_vel.x = -m_ball_vel.x;
 }
 
 void game::render()
@@ -120,14 +137,13 @@ void game::render()
     SDL_RenderClear(m_renderer);
 
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-    constexpr s32 thickness = 15;
-    SDL_Rect      top_wall{0, 0, 1000, thickness};
-    SDL_Rect      bottom_wall{0, 800 - thickness, 1000, thickness};
+    SDL_Rect top_wall{0, 0, window_width, thickness};
+    SDL_Rect bottom_wall{0, window_height - thickness, window_width, thickness};
     SDL_RenderFillRect(m_renderer, &top_wall);
     SDL_RenderFillRect(m_renderer, &bottom_wall);
 
-    SDL_Rect ball{ (int)m_ball_pos.x - thickness / 2, (int)m_ball_pos.y - thickness / 2, thickness, thickness };
-    SDL_Rect paddle{ (int)m_paddle_pos.x - thickness / 2, (int)m_paddle_pos.y - 100 / 2, thickness, 100 };
+    SDL_Rect ball{(int) m_ball_pos.x - thickness / 2, (int) m_ball_pos.y - thickness / 2, thickness, thickness};
+    SDL_Rect paddle{(int) m_paddle_pos.x - thickness / 2, (int) m_paddle_pos.y - 100 / 2, thickness, 100};
     SDL_RenderFillRect(m_renderer, &ball);
     SDL_RenderFillRect(m_renderer, &paddle);
 

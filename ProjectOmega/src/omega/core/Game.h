@@ -57,5 +57,6 @@ class game
     vec2 m_paddle_pos;
     u32 m_ticks = 0;
     s32 m_paddle_dir = 0;
+    vec2 m_ball_vel{ -200.0f, 235.0f };
 };
 } // namespace omega
