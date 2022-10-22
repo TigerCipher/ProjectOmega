@@ -36,9 +36,7 @@ s32 window_height = 800;
 
 namespace omega
 {
-game::game() :
-    m_window(nullptr), m_running(true), m_ball_pos(1000.0f / 2.0f, 800.0f / 2.0f), m_paddle_pos(0.0f, 800.0f / 2.0f)
-{}
+game::game() : m_window(nullptr), m_running(true), m_ball_pos(1000.0f / 2.0f, 800.0f / 2.0f) {}
 
 bool game::initialize()
 {
@@ -97,9 +95,14 @@ void game::process_input()
     const u8* key_state = SDL_GetKeyboardState(nullptr);
     if (key_state [ SDL_SCANCODE_ESCAPE ]) m_running = false;
 
-    m_paddle_dir = 0;
-    if (key_state [ SDL_SCANCODE_W ]) --m_paddle_dir;
-    if (key_state [ SDL_SCANCODE_S ]) ++m_paddle_dir;
+    m_left_paddle_dir = 0;
+    if (key_state [ SDL_SCANCODE_W ]) --m_left_paddle_dir;
+    if (key_state [ SDL_SCANCODE_S ]) ++m_left_paddle_dir;
+
+    m_right_paddle_dir = 0;
+    if (key_state [ SDL_SCANCODE_UP ]) --m_right_paddle_dir;
+    if (key_state [ SDL_SCANCODE_DOWN ]) ++m_right_paddle_dir;
+    if (key_state [ SDL_SCANCODE_D ]) __debugbreak();
 }
 
 void game::update()
@@ -112,13 +115,22 @@ void game::update()
 
     if (delta > 0.05f) delta = 0.0f;
 
-    if (m_paddle_dir)
+    if (m_left_paddle_dir)
     {
-        m_paddle_pos.y += m_paddle_dir * 300.0f * delta;
-        if (m_paddle_pos.y < 100 / 2.0f + thickness) // paddle height / 2 + paddle width
-            m_paddle_pos.y = 100 / 2.0f + thickness;
-        else if (m_paddle_pos.y > 800 - 100 / 2.0f - thickness)
-            m_paddle_pos.y = 800 - 100 / 2.0f - 15;
+        m_left_paddle_pos.y += m_left_paddle_dir * 300.0f * delta;
+        if (m_left_paddle_pos.y < 100 / 2.0f + thickness) // paddle height / 2 + paddle width
+            m_left_paddle_pos.y = 100 / 2.0f + thickness;
+        else if (m_left_paddle_pos.y > 800 - 100 / 2.0f - thickness)
+            m_left_paddle_pos.y = 800 - 100 / 2.0f - 15;
+    }
+
+    if (m_right_paddle_dir)
+    {
+        m_right_paddle_pos.y += m_right_paddle_dir * 300.0f * delta;
+        if (m_right_paddle_pos.y < 100 / 2.0f + thickness) // paddle height / 2 + paddle width
+            m_right_paddle_pos.y = 100 / 2.0f + thickness;
+        else if (m_right_paddle_pos.y > 800 - 100 / 2.0f - thickness)
+            m_right_paddle_pos.y = 800 - 100 / 2.0f - 15;
     }
 
     m_ball_pos.x += m_ball_vel.x * delta;
@@ -126,8 +138,12 @@ void game::update()
 
     if (m_ball_pos.y <= thickness && m_ball_vel.y < 0) m_ball_vel.y = -m_ball_vel.y;
     if (m_ball_pos.y >= window_height - thickness && m_ball_vel.y > 0) m_ball_vel.y = -m_ball_vel.y;
-    float diff = abs(m_ball_pos.y - m_paddle_pos.y);
+    float diff = abs(m_ball_pos.y - m_left_paddle_pos.y);
     if (diff <= 100 / 2.0f && m_ball_pos.x <= 25.0f && m_ball_pos.x >= 20.0f && m_ball_vel.x < 0)
+        m_ball_vel.x = -m_ball_vel.x;
+    diff = abs(m_ball_pos.y - m_right_paddle_pos.y);
+    if (diff <= 100 / 2.0f && m_ball_pos.x >= (window_width - 25) && m_ball_pos.x <= (window_width - 20) &&
+        m_ball_vel.x > 0)
         m_ball_vel.x = -m_ball_vel.x;
 }
 
@@ -143,9 +159,13 @@ void game::render()
     SDL_RenderFillRect(m_renderer, &bottom_wall);
 
     SDL_Rect ball{(int) m_ball_pos.x - thickness / 2, (int) m_ball_pos.y - thickness / 2, thickness, thickness};
-    SDL_Rect paddle{(int) m_paddle_pos.x - thickness / 2, (int) m_paddle_pos.y - 100 / 2, thickness, 100};
+    SDL_Rect left_paddle{(int) m_left_paddle_pos.x - thickness / 2, (int) m_left_paddle_pos.y - 100 / 2, thickness,
+                         100};
+    SDL_Rect right_paddle{(int) m_right_paddle_pos.x - thickness / 2, (int) m_right_paddle_pos.y - 100 / 2, thickness,
+                          100};
     SDL_RenderFillRect(m_renderer, &ball);
-    SDL_RenderFillRect(m_renderer, &paddle);
+    SDL_RenderFillRect(m_renderer, &left_paddle);
+    SDL_RenderFillRect(m_renderer, &right_paddle);
 
     SDL_RenderPresent(m_renderer);
 }

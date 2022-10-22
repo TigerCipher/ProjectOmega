@@ -54,9 +54,11 @@ class game
         float y;
     };
     vec2 m_ball_pos;
-    vec2 m_paddle_pos;
+    vec2 m_left_paddle_pos{ 0.0f, 800.0f / 2.0f };
+    vec2 m_right_paddle_pos{ 1000.0f - 15.0f, 800.0f / 2.0f };
     u32 m_ticks = 0;
-    s32 m_paddle_dir = 0;
+    s32 m_left_paddle_dir = 0;
+    s32 m_right_paddle_dir = 0;
     vec2 m_ball_vel{ -200.0f, 235.0f };
 };
 } // namespace omega
