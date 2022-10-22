@@ -15,37 +15,24 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: game.h
+// File Name: common.h
 // Date File Created: 10/21/2022
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
+
 #pragma once
 
+#include <cstdint>
+#include <cassert>
 
-struct SDL_Window;
-struct SDL_Renderer;
 
-namespace omega
-{
-class game
-{
-  public:
-    game();
+using u8  = uint8_t;
+using u16 = uint16_t;
+using u32 = uint32_t;
+using u64 = uint64_t;
 
-    bool initialize();
-    void run();
-    void shutdown();
-
-  private:
-    void process_input();
-    void update();
-    void render();
-
-    SDL_Window* m_window;
-    bool        m_running = false;
-
-    // Temporary
-    SDL_Renderer* m_renderer;
-};
-} // namespace omega
+using s8  = int8_t;
+using s16 = int16_t;
+using s32 = int32_t;
+using s64 = int64_t;

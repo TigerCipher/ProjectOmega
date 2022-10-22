@@ -26,5 +26,8 @@
     <ClInclude Include="src\omega\core\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\omega\core\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -49,3 +49,4 @@ TabWidth: 4
 #IndentAccessModifiers: true
 #AccessModifierOffset: -4
 ContinuationIndentWidth: 4
+PointerAlignment: Left

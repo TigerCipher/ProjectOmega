@@ -22,6 +22,7 @@
 // ------------------------------------------------------------------------------
 
 #include "game.h"
+#include "common.h"
 
 #include <SDL2/SDL.h>
 
@@ -34,16 +35,24 @@ game::game() : m_window(nullptr), m_running(true) {}
 bool game::initialize()
 {
     int err = SDL_Init(SDL_INIT_VIDEO);
-    if(err)
+    if (err)
     {
         std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
         return false;
     }
     m_window = SDL_CreateWindow("Project Omega", 200, 200, 1000, 800, 0);
 
-    if(!m_window)
+    if (!m_window)
     {
         std::cerr << "Failed to create window: " << SDL_GetError() << std::endl;
+        return false;
+    }
+
+    // Temporary
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (!m_renderer)
+    {
+        std::cerr << "Failed to create renderer: " << SDL_GetError() << std::endl;
         return false;
     }
     return true;
@@ -51,7 +60,7 @@ bool game::initialize()
 
 void game::run()
 {
-    while(m_running)
+    while (m_running)
     {
         process_input();
         update();
@@ -61,6 +70,7 @@ void game::run()
 
 void game::shutdown()
 {
+    SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
 }
@@ -68,18 +78,25 @@ void game::shutdown()
 void game::process_input()
 {
     SDL_Event event;
-    while(SDL_PollEvent(&event))
+    while (SDL_PollEvent(&event))
     {
-        switch(event.type)
+        switch (event.type)
         {
-        case SDL_QUIT:
-            m_running = false;
-            break;
+        case SDL_QUIT: m_running = false; break;
         }
     }
+
+    const u8* key_state = SDL_GetKeyboardState(nullptr);
+    if (key_state [ SDL_SCANCODE_ESCAPE ]) m_running = false;
 }
 
 void game::update() {}
 
-void game::render() {}
+void game::render()
+{
+    SDL_SetRenderDrawColor(m_renderer, 52, 15, 15, 255);
+    SDL_RenderClear(m_renderer);
+
+    SDL_RenderPresent(m_renderer);
+}
 } // namespace omega
