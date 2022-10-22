@@ -23,6 +23,7 @@
 
 #include "game.h"
 
+#include <format>
 #include <SDL2/SDL.h>
 
 #include <iostream>
@@ -32,6 +33,7 @@ namespace
 s32 thickness     = 15;
 s32 window_width  = 1000;
 s32 window_height = 800;
+
 } // namespace
 
 namespace omega
@@ -66,11 +68,24 @@ bool game::initialize()
 
 void game::run()
 {
+    u32 st = SDL_GetTicks();
     while (m_running)
     {
+        u32 start_time = SDL_GetTicks();
         process_input();
         update();
         render();
+        u32 frame_time = SDL_GetTicks() - start_time;
+        float fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
+        std::string title = std::format("Project Omega - FPS: {:.5f}", fps);
+        SDL_SetWindowTitle(m_window, title.c_str());
+
+        u32 elapsed = SDL_GetTicks() - st;
+        if(elapsed >= 1000)
+        {
+            std::cerr << "FPS: " << fps << std::endl;
+            st = SDL_GetTicks();
+        }
     }
 }
 
@@ -107,8 +122,8 @@ void game::process_input()
 
 void game::update()
 {
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), m_ticks + 16))
-        ;
+    // while (!SDL_TICKS_PASSED(SDL_GetTicks(), m_ticks + 16))
+    //     ;
 
     float delta = (SDL_GetTicks() - m_ticks) / 1000.0f;
     m_ticks     = SDL_GetTicks();
