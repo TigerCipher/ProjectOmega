@@ -42,7 +42,7 @@ game::game() : m_window(nullptr), m_running(true), m_ball_pos(1000.0f / 2.0f, 80
 
 bool game::initialize()
 {
-    int err = SDL_Init(SDL_INIT_VIDEO);
+    s32 err = SDL_Init(SDL_INIT_VIDEO);
     if (err)
     {
         std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
@@ -76,7 +76,7 @@ void game::run()
         update();
         render();
         u32 frame_time = SDL_GetTicks() - start_time;
-        float fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
+        f32 fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
         std::string title = std::format("Project Omega - FPS: {:.5f}", fps);
         SDL_SetWindowTitle(m_window, title.c_str());
 
@@ -125,7 +125,7 @@ void game::update()
     // while (!SDL_TICKS_PASSED(SDL_GetTicks(), m_ticks + 16))
     //     ;
 
-    float delta = (SDL_GetTicks() - m_ticks) / 1000.0f;
+    f32 delta = (SDL_GetTicks() - m_ticks) / 1000.0f;
     m_ticks     = SDL_GetTicks();
 
     if (delta > 0.05f) delta = 0.0f;
@@ -153,7 +153,7 @@ void game::update()
 
     if (m_ball_pos.y <= thickness && m_ball_vel.y < 0) m_ball_vel.y = -m_ball_vel.y;
     if (m_ball_pos.y >= window_height - thickness && m_ball_vel.y > 0) m_ball_vel.y = -m_ball_vel.y;
-    float diff = abs(m_ball_pos.y - m_left_paddle_pos.y);
+    f32 diff = abs(m_ball_pos.y - m_left_paddle_pos.y);
     if (diff <= 100 / 2.0f && m_ball_pos.x <= 25.0f && m_ball_pos.x >= 20.0f && m_ball_vel.x < 0)
         m_ball_vel.x = -m_ball_vel.x;
     diff = abs(m_ball_pos.y - m_right_paddle_pos.y);

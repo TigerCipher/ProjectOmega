@@ -15,46 +15,49 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: game.h
-// Date File Created: 10/21/2022
+// File Name: entity.h
+// Date File Created: 10/22/2022
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
 #pragma once
-#include "common.h"
 
+#include "omega/core/common.h"
 
-struct SDL_Window;
-struct SDL_Renderer;
 
 namespace omega
 {
-class game
+class game;
+class component;
+
+class entity
 {
-  public:
-    game();
+public:
+    enum state
+    {
+        ACTIVE, SUSPENDED, DEAD
+    };
 
-    bool initialize();
-    void run();
-    void shutdown();
+    explicit entity(game* game);
 
-  private:
-    void process_input();
-    void update();
-    void render();
+    virtual ~entity();
 
-    SDL_Window* m_window;
-    bool        m_running = false;
+    void update(f32 delta);
+    void update_components(f32 delta);
 
-    // Temporary
-    SDL_Renderer* m_renderer;
+    virtual void update_entity(f32 delta);
 
-    vec2 m_ball_pos;
-    vec2 m_left_paddle_pos{ 0.0f, 800.0f / 2.0f };
-    vec2 m_right_paddle_pos{ 1000.0f - 15.0f, 800.0f / 2.0f };
-    u32 m_ticks = 0;
-    s32 m_left_paddle_dir = 0;
-    s32 m_right_paddle_dir = 0;
-    vec2 m_ball_vel{ -200.0f, 235.0f };
+    void add_component(component* comp);
+    void remove_component(component* comp);
+
+private:
+    state m_state;
+    game* m_game;
+    utl::vector<component*> m_components;
+
+    // Transform data
+    vec2 m_position;
+    f32 m_scale;
+    f32 m_rotation; // radians
 };
-} // namespace omega
+}

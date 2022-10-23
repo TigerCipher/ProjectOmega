@@ -94,6 +94,9 @@
   <ItemGroup>
     <ClInclude Include="src\omega\core\common.h" />
     <ClInclude Include="src\omega\core\game.h" />
+    <ClInclude Include="src\omega\ecs\component.h" />
+    <ClInclude Include="src\omega\ecs\entity.h" />
+    <ClInclude Include="src\omega\util\util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -29,5 +29,14 @@
     <ClInclude Include="src\omega\core\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\omega\ecs\entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\omega\util\util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\omega\ecs\component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
