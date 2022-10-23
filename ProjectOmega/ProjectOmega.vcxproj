@@ -89,6 +89,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\omega\core\game.cpp" />
+    <ClCompile Include="src\omega\ecs\component.cpp" />
+    <ClCompile Include="src\omega\ecs\entity.cpp" />
     <ClCompile Include="src\omega\main.cpp" />
   </ItemGroup>
   <ItemGroup>
