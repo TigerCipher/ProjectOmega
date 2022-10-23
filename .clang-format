@@ -9,7 +9,7 @@ AlignOperands: AlignAfterOperator
 AllowShortBlocksOnASingleLine: Always
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: Always
-AllowShortLoopsOnASingleLine: true
+AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: true
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom

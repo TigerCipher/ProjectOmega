@@ -50,6 +50,8 @@ public:
     void add_component(component* comp);
     void remove_component(component* comp);
 
+    state get_state() const { return m_state; }
+
 private:
     state m_state;
     game* m_game;

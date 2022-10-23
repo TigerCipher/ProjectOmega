@@ -23,12 +23,13 @@
 #pragma once
 #include "common.h"
 
-
 struct SDL_Window;
 struct SDL_Renderer;
 
 namespace omega
 {
+class entity;
+
 class game
 {
   public:
@@ -38,6 +39,9 @@ class game
     void run();
     void shutdown();
 
+    void add_entity(entity* ent);
+    void remove_entity(entity* ent);
+
   private:
     void process_input();
     void update();
@@ -46,15 +50,19 @@ class game
     SDL_Window* m_window;
     bool        m_running = false;
 
+    utl::vector<entity*> m_entities;
+    utl::vector<entity*> m_pending_entities;
+    bool                 m_updating_entities = false;
+
     // Temporary
     SDL_Renderer* m_renderer;
 
     vec2 m_ball_pos;
-    vec2 m_left_paddle_pos{ 0.0f, 800.0f / 2.0f };
-    vec2 m_right_paddle_pos{ 1000.0f - 15.0f, 800.0f / 2.0f };
-    u32 m_ticks = 0;
-    s32 m_left_paddle_dir = 0;
-    s32 m_right_paddle_dir = 0;
-    vec2 m_ball_vel{ -200.0f, 235.0f };
+    vec2 m_left_paddle_pos{0.0f, 800.0f / 2.0f};
+    vec2 m_right_paddle_pos{1000.0f - 15.0f, 800.0f / 2.0f};
+    u32  m_ticks            = 0;
+    s32  m_left_paddle_dir  = 0;
+    s32  m_right_paddle_dir = 0;
+    vec2 m_ball_vel{-200.0f, 235.0f};
 };
 } // namespace omega

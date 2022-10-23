@@ -28,6 +28,8 @@
 
 #include <iostream>
 
+#include "omega/ecs/entity.h"
+
 namespace
 {
 s32 thickness     = 15;
@@ -75,13 +77,13 @@ void game::run()
         process_input();
         update();
         render();
-        u32 frame_time = SDL_GetTicks() - start_time;
-        f32 fps = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
-        std::string title = std::format("Project Omega - FPS: {:.5f}", fps);
+        u32         frame_time = SDL_GetTicks() - start_time;
+        f32         fps        = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
+        std::string title      = std::format("Project Omega - FPS: {:.5f}", fps);
         SDL_SetWindowTitle(m_window, title.c_str());
 
         u32 elapsed = SDL_GetTicks() - st;
-        if(elapsed >= 1000)
+        if (elapsed >= 1000)
         {
             std::cerr << "FPS: " << fps << std::endl;
             st = SDL_GetTicks();
@@ -94,6 +96,31 @@ void game::shutdown()
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
+}
+
+void game::add_entity(entity* ent)
+{
+    if (m_updating_entities) m_pending_entities.emplace_back(ent);
+    else
+        m_entities.emplace_back(ent);
+}
+
+void game::remove_entity(entity* ent)
+{
+    auto it = std::find(m_pending_entities.begin(), m_pending_entities.end(), ent);
+    if (it != m_pending_entities.end())
+    {
+        // Move entity to end of vector and pop off, this helps us avoid erase copies
+        std::iter_swap(it, m_pending_entities.end() - 1);
+        m_pending_entities.pop_back();
+    }
+
+    it = std::find(m_entities.begin(), m_entities.end(), ent);
+    if (it != m_entities.end())
+    {
+        std::iter_swap(it, m_entities.end() - 1);
+        m_entities.pop_back();
+    }
 }
 
 void game::process_input()
@@ -117,7 +144,7 @@ void game::process_input()
     m_right_paddle_dir = 0;
     if (key_state [ SDL_SCANCODE_UP ]) --m_right_paddle_dir;
     if (key_state [ SDL_SCANCODE_DOWN ]) ++m_right_paddle_dir;
-    if (key_state [ SDL_SCANCODE_D ]) __debugbreak();
+    // if (key_state [ SDL_SCANCODE_D ]) __debugbreak();
 }
 
 void game::update()
@@ -126,9 +153,38 @@ void game::update()
     //     ;
 
     f32 delta = (SDL_GetTicks() - m_ticks) / 1000.0f;
-    m_ticks     = SDL_GetTicks();
+    m_ticks   = SDL_GetTicks();
 
     if (delta > 0.05f) delta = 0.0f;
+
+
+    m_updating_entities = true;
+    for (auto* ent : m_entities)
+    {
+        ent->update(delta);
+    }
+    m_updating_entities = false;
+
+    for (auto* pent : m_pending_entities)
+    {
+        m_entities.emplace_back(pent);
+    }
+    m_pending_entities.clear();
+
+    utl::vector<entity*> dead_entities;
+    for (auto* ent : m_entities)
+    {
+        if (ent->get_state() == entity::DEAD) { dead_entities.emplace_back(ent); }
+    }
+
+    // Maybe we want to do more stuff with dead entities?
+
+    // delete dead entities (auto removes them from vectors)
+    for (auto* ent : dead_entities)
+    {
+        delete ent;
+    }
+
 
     if (m_left_paddle_dir)
     {
