@@ -23,12 +23,16 @@
 #pragma once
 #include "common.h"
 
+#include <unordered_map>
+
 struct SDL_Window;
 struct SDL_Renderer;
+struct SDL_Texture;
 
 namespace omega
 {
 class entity;
+class sprite_component;
 
 class game
 {
@@ -42,10 +46,17 @@ class game
     void add_entity(entity* ent);
     void remove_entity(entity* ent);
 
+    void add_sprite(sprite_component* sprite);
+    void remove_sprite(sprite_component* sprite);
+
+    SDL_Texture* get_texture(const char* filename);
+
   private:
     void process_input();
     void update();
     void render();
+
+    SDL_Texture* load_texture(const char* filename);
 
     SDL_Window* m_window;
     bool        m_running = false;
@@ -53,6 +64,9 @@ class game
     utl::vector<entity*> m_entities;
     utl::vector<entity*> m_pending_entities;
     bool                 m_updating_entities = false;
+
+    std::unordered_map<std::string, SDL_Texture*> m_textures;
+    utl::vector<sprite_component*> m_sprites;
 
     // Temporary
     SDL_Renderer* m_renderer;

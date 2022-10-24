@@ -32,10 +32,12 @@ class component;
 
 class entity
 {
-public:
+  public:
     enum state
     {
-        ACTIVE, SUSPENDED, DEAD
+        ACTIVE,
+        SUSPENDED,
+        DEAD
     };
 
     explicit entity(game* game);
@@ -52,14 +54,20 @@ public:
 
     state get_state() const { return m_state; }
 
-private:
-    state m_state;
-    game* m_game;
+    game* get_game() const { return m_game; }
+
+    vec2 position() const { return m_position; }
+    f32  scale() const { return m_scale; }
+    f32  rotation() const { return m_rotation; }
+
+  private:
+    state                   m_state;
+    game*                   m_game;
     utl::vector<component*> m_components;
 
     // Transform data
     vec2 m_position;
-    f32 m_scale;
-    f32 m_rotation; // radians
+    f32  m_scale;
+    f32  m_rotation; // radians
 };
-}
+} // namespace omega

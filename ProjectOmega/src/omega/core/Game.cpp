@@ -25,6 +25,7 @@
 
 #include <format>
 #include <SDL2/SDL.h>
+#include <SDL_image.h>
 
 #include <iostream>
 
@@ -65,6 +66,13 @@ bool game::initialize()
         std::cerr << "Failed to create renderer: " << SDL_GetError() << std::endl;
         return false;
     }
+
+    err = IMG_Init(IMG_INIT_PNG);
+    if (!err)
+    {
+        std::cerr << "Failed to initialize SDL Image\n";
+        return false;
+    }
     return true;
 }
 
@@ -93,6 +101,7 @@ void game::run()
 
 void game::shutdown()
 {
+    IMG_Quit();
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
@@ -100,7 +109,8 @@ void game::shutdown()
 
 void game::add_entity(entity* ent)
 {
-    if (m_updating_entities) m_pending_entities.emplace_back(ent);
+    if (m_updating_entities)
+        m_pending_entities.emplace_back(ent);
     else
         m_entities.emplace_back(ent);
 }
@@ -123,6 +133,15 @@ void game::remove_entity(entity* ent)
     }
 }
 
+SDL_Texture* game::get_texture(const char* filename)
+{
+    if (m_textures.contains(filename))
+        return m_textures [ filename ];
+    SDL_Texture* tex        = load_texture(filename);
+    m_textures [ filename ] = tex;
+    return tex;
+}
+
 void game::process_input()
 {
     SDL_Event event;
@@ -135,15 +154,20 @@ void game::process_input()
     }
 
     const u8* key_state = SDL_GetKeyboardState(nullptr);
-    if (key_state [ SDL_SCANCODE_ESCAPE ]) m_running = false;
+    if (key_state [ SDL_SCANCODE_ESCAPE ])
+        m_running = false;
 
     m_left_paddle_dir = 0;
-    if (key_state [ SDL_SCANCODE_W ]) --m_left_paddle_dir;
-    if (key_state [ SDL_SCANCODE_S ]) ++m_left_paddle_dir;
+    if (key_state [ SDL_SCANCODE_W ])
+        --m_left_paddle_dir;
+    if (key_state [ SDL_SCANCODE_S ])
+        ++m_left_paddle_dir;
 
     m_right_paddle_dir = 0;
-    if (key_state [ SDL_SCANCODE_UP ]) --m_right_paddle_dir;
-    if (key_state [ SDL_SCANCODE_DOWN ]) ++m_right_paddle_dir;
+    if (key_state [ SDL_SCANCODE_UP ])
+        --m_right_paddle_dir;
+    if (key_state [ SDL_SCANCODE_DOWN ])
+        ++m_right_paddle_dir;
     // if (key_state [ SDL_SCANCODE_D ]) __debugbreak();
 }
 
@@ -155,7 +179,8 @@ void game::update()
     f32 delta = (SDL_GetTicks() - m_ticks) / 1000.0f;
     m_ticks   = SDL_GetTicks();
 
-    if (delta > 0.05f) delta = 0.0f;
+    if (delta > 0.05f)
+        delta = 0.0f;
 
 
     m_updating_entities = true;
@@ -174,7 +199,10 @@ void game::update()
     utl::vector<entity*> dead_entities;
     for (auto* ent : m_entities)
     {
-        if (ent->get_state() == entity::DEAD) { dead_entities.emplace_back(ent); }
+        if (ent->get_state() == entity::DEAD)
+        {
+            dead_entities.emplace_back(ent);
+        }
     }
 
     // Maybe we want to do more stuff with dead entities?
@@ -207,8 +235,10 @@ void game::update()
     m_ball_pos.x += m_ball_vel.x * delta;
     m_ball_pos.y += m_ball_vel.y * delta;
 
-    if (m_ball_pos.y <= thickness && m_ball_vel.y < 0) m_ball_vel.y = -m_ball_vel.y;
-    if (m_ball_pos.y >= window_height - thickness && m_ball_vel.y > 0) m_ball_vel.y = -m_ball_vel.y;
+    if (m_ball_pos.y <= thickness && m_ball_vel.y < 0)
+        m_ball_vel.y = -m_ball_vel.y;
+    if (m_ball_pos.y >= window_height - thickness && m_ball_vel.y > 0)
+        m_ball_vel.y = -m_ball_vel.y;
     f32 diff = abs(m_ball_pos.y - m_left_paddle_pos.y);
     if (diff <= 100 / 2.0f && m_ball_pos.x <= 25.0f && m_ball_pos.x >= 20.0f && m_ball_vel.x < 0)
         m_ball_vel.x = -m_ball_vel.x;
@@ -239,5 +269,25 @@ void game::render()
     SDL_RenderFillRect(m_renderer, &right_paddle);
 
     SDL_RenderPresent(m_renderer);
+}
+
+SDL_Texture* game::load_texture(const char* filename)
+{
+    SDL_Surface* surf = IMG_Load(filename);
+    if (!surf)
+    {
+        std::cerr << "Failed to load texture file " << filename << std::endl;
+        return nullptr;
+    }
+
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(m_renderer, surf);
+    SDL_FreeSurface(surf);
+    if (!tex)
+    {
+        std::cerr << "Failed to convert surface to texture - " << filename << std::endl;
+        return nullptr;
+    }
+
+    return tex;
 }
 } // namespace omega

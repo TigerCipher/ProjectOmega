@@ -8,7 +8,7 @@ AlignConsecutiveDeclarations: Consecutive
 AlignOperands: AlignAfterOperator
 AllowShortBlocksOnASingleLine: Always
 AllowShortCaseLabelsOnASingleLine: true
-AllowShortIfStatementsOnASingleLine: Always
+AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: true
 AlwaysBreakTemplateDeclarations: Yes

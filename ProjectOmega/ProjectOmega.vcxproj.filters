@@ -27,6 +27,9 @@
     <ClCompile Include="src\omega\ecs\component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\omega\ecs\spritecomponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\omega\core\game.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\omega\ecs\component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\omega\ecs\spritecomponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

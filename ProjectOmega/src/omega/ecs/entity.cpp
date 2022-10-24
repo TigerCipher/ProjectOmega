@@ -44,7 +44,8 @@ entity::~entity()
 
 void entity::update(f32 delta)
 {
-    if (m_state != ACTIVE) return;
+    if (m_state != ACTIVE)
+        return;
     update_components(delta);
     update_entity(delta);
 }
@@ -61,11 +62,12 @@ void entity::update_entity(f32 delta) {}
 
 void entity::add_component(component* comp)
 {
-    s32  order = comp->get_update_order();
-    auto it    = m_components.begin();
+    const s32 order = comp->get_update_order();
+    auto      it    = m_components.begin();
     while (it++ != m_components.end())
     {
-        if (order < (*it)->get_update_order()) break;
+        if (order < (*it)->get_update_order())
+            break;
     }
 
     m_components.insert(it, comp);
@@ -73,7 +75,7 @@ void entity::add_component(component* comp)
 
 void entity::remove_component(component* comp)
 {
-    auto it = std::find(m_components.begin(), m_components.end(), comp);
-    if (it != m_components.end()) m_components.erase(it);
+    if (const auto it = std::ranges::find(m_components, comp); it != m_components.end())
+        m_components.erase(it);
 }
 } // namespace omega
