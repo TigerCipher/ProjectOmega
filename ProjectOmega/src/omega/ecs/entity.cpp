@@ -64,10 +64,11 @@ void entity::add_component(component* comp)
 {
     const s32 order = comp->get_update_order();
     auto      it    = m_components.begin();
-    while (it++ != m_components.end())
+    while (it != m_components.end())
     {
         if (order < (*it)->get_update_order())
             break;
+        ++it;
     }
 
     m_components.insert(it, comp);

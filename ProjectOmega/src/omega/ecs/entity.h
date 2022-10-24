@@ -60,6 +60,8 @@ class entity
     f32  scale() const { return m_scale; }
     f32  rotation() const { return m_rotation; }
 
+    void set_position(const vec2& pos) { m_position = pos; }
+
   private:
     state                   m_state;
     game*                   m_game;

@@ -25,11 +25,12 @@
 
 #include <format>
 #include <SDL2/SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 #include <iostream>
 
 #include "omega/ecs/entity.h"
+#include "omega/ecs/spritecomponent.h"
 
 namespace
 {
@@ -41,6 +42,23 @@ s32 window_height = 800;
 
 namespace omega
 {
+
+class asteroid : public entity
+{
+  public:
+    asteroid(game* game) : entity(game)
+    {
+        m_sprite = new sprite_component(this);
+        m_sprite->set_texture(game->get_texture("./assets/sprites/asteroid.png"));
+        set_position({100, 100});
+    }
+    virtual ~asteroid() { delete m_sprite; }
+    void update_entity(f32 delta) override {}
+
+  private:
+    sprite_component* m_sprite;
+};
+
 game::game() : m_window(nullptr), m_running(true), m_ball_pos(1000.0f / 2.0f, 800.0f / 2.0f) {}
 
 bool game::initialize()
@@ -73,6 +91,9 @@ bool game::initialize()
         std::cerr << "Failed to initialize SDL Image\n";
         return false;
     }
+
+    // Load game data
+    add_entity(new asteroid(this));
     return true;
 }
 
@@ -131,6 +152,25 @@ void game::remove_entity(entity* ent)
         std::iter_swap(it, m_entities.end() - 1);
         m_entities.pop_back();
     }
+}
+
+void game::add_sprite(sprite_component* sprite)
+{
+    const s32 draw_order = sprite->draw_order();
+    auto      it         = m_sprites.begin();
+    while (it != m_sprites.end())
+    {
+        if (draw_order < (*it)->draw_order())
+            break;
+        ++it;
+    }
+    m_sprites.insert(it, sprite);
+}
+
+void game::remove_sprite(sprite_component* sprite)
+{
+    auto it = std::ranges::find(m_sprites, sprite);
+    m_sprites.erase(it);
 }
 
 SDL_Texture* game::get_texture(const char* filename)
@@ -267,6 +307,13 @@ void game::render()
     SDL_RenderFillRect(m_renderer, &ball);
     SDL_RenderFillRect(m_renderer, &left_paddle);
     SDL_RenderFillRect(m_renderer, &right_paddle);
+
+
+    for (auto* spr : m_sprites)
+    {
+        spr->draw(m_renderer);
+    }
+
 
     SDL_RenderPresent(m_renderer);
 }

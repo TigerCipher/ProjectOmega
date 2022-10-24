@@ -34,6 +34,7 @@ namespace omega
 class entity;
 class sprite_component;
 
+
 class game
 {
   public:

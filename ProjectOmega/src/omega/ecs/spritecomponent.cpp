@@ -21,6 +21,9 @@
 //
 // ------------------------------------------------------------------------------
 #include "spritecomponent.h"
+
+#include <iostream>
+
 #include "entity.h"
 #include "omega/core/game.h"
 
@@ -34,7 +37,10 @@ sprite_component::sprite_component(entity* parent, s32 draw_order) : component(p
     m_parent->get_game()->add_sprite(this);
 }
 
-sprite_component::~sprite_component() { m_parent->get_game()->remove_sprite(this); }
+sprite_component::~sprite_component()
+{
+    m_parent->get_game()->remove_sprite(this);
+}
 
 void sprite_component::draw(SDL_Renderer* renderer)
 {
