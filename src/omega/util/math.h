@@ -15,30 +15,61 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: component.h
-// Date File Created: 10/22/2022
+// File Name: math.h
+// Date File Created: 10/28/2022
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
+
 #pragma once
 
-#include "omega/core/common.h"
+#include "omega/core/types.h"
+#include <cmath>
+#include <limits>
 
 namespace omega
 {
-class entity;
+constexpr f32 pi           = 3.1415926535f;
+constexpr f32 two_pi       = pi * 2.0f;
+constexpr f32 half_pi      = pi / 2.0f;
+constexpr f32 infinity     = std::numeric_limits<f32>::infinity();
+constexpr f32 neg_infinity = -infinity;
 
-class component
+inline f32 to_radians(f32 degrees) { return degrees * pi / 180.0f; }
+
+inline f32 to_degrees(f32 radians) { return radians * 180.0f / pi; }
+
+template<typename T>
+T max(const T& a, const T& b)
 {
-  public:
-    explicit component(entity* parent, s32 update_order = 100);
-    virtual ~component();
+    return a < b ? b : a;
+}
 
-    virtual void update(f32 delta);
-    s32          get_update_order() const { return m_update_order; }
+template<typename T>
+T min(const T& a, const T& b)
+{
+    return a < b ? a : b;
+}
 
-  protected:
-    entity* m_parent;
-    s32     m_update_order;
+struct vec2
+{
+    f32 x = 0;
+    f32 y = 0;
 };
+
+struct vec3
+{
+    f32 x = 0;
+    f32 y = 0;
+    f32 z = 0;
+};
+
+struct vec4
+{
+    f32 x = 0;
+    f32 y = 0;
+    f32 z = 0;
+    f32 w = 0;
+};
+
 } // namespace omega

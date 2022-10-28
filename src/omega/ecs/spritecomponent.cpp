@@ -37,11 +37,11 @@ sprite_component::sprite_component(entity* parent, s32 draw_order) : component(p
     m_parent->get_game()->add_sprite(this);
 }
 
-sprite_component::~sprite_component()
-{
-    m_parent->get_game()->remove_sprite(this);
-}
+sprite_component::~sprite_component() { m_parent->get_game()->remove_sprite(this); }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
+#pragma ide diagnostic ignored "bugprone-integer-division"
 void sprite_component::draw(SDL_Renderer* renderer)
 {
     if (!m_texture)
@@ -52,8 +52,9 @@ void sprite_component::draw(SDL_Renderer* renderer)
     r.x = (int) (m_parent->position().x - r.w / 2);
     r.y = (int) (m_parent->position().y - r.h / 2);
 
-    SDL_RenderCopyEx(renderer, m_texture, nullptr, &r, 0 /*TODO rotation in neg degrees*/, nullptr, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, m_texture, nullptr, &r, -to_degrees(m_parent->rotation()), nullptr, SDL_FLIP_NONE);
 }
+#pragma clang diagnostic pop
 
 void sprite_component::set_texture(SDL_Texture* texture)
 {

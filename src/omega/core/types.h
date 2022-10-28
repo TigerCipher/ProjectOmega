@@ -15,29 +15,25 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: main.cpp
-// Date File Created: 10/21/2022
+// File Name: types.h
+// Date File Created: 10/28/2022
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
 
-#include <iostream>
+#pragma once
 
-#include "omega/core/game.h"
+#include <cstdint>
 
-int main(int argc, char** argv)
-{
-    std::cout << "Hello World!\n";
-    auto* game = new omega::game();
-    if (!game->initialize())
-    {
-        std::cerr << "Something went wrong!\n";
-        return -1;
-    }
-    game->run();
+using u8  = uint8_t;
+using u16 = uint16_t;
+using u32 = uint32_t;
+using u64 = uint64_t;
 
-    game->shutdown();
+using s8  = int8_t;
+using s16 = int16_t;
+using s32 = int32_t;
+using s64 = int64_t;
 
-    delete game;
-    return 0;
-}
+using f32 = float;
+using f64 = double;
