@@ -25,9 +25,12 @@
 
 #include "omega/core/game.h"
 
+#include <spdlog/spdlog.h>
+
 int main(int argc, char** argv)
 {
     std::cout << "Hello World!\n";
+    fmt::print("Hello!\n");
     auto* game = new omega::game();
     if (!game->initialize())
     {
