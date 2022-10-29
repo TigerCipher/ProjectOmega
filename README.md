@@ -7,6 +7,7 @@ This project is structured with my current personal preferred setup for CLion on
 + All sources and headers are in `/src`
 + CLion sends compiled binaries, object files, intermediates, etc to `/cmake-build-CONFIG`
 + BUT, it is important to set the run configuration to use `/bin` as the working directory. This is where `dll` and `assets` are located
++ SDL2 and spdlog are both built with MSVC. At some point I will change CMakeLists.txt to be platform independent
 
 ### Coding Conventions
 + Formatting is provided by my `.clang-format` file
