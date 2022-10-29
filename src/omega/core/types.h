@@ -24,6 +24,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 using u8  = uint8_t;
 using u16 = uint16_t;
@@ -37,3 +38,39 @@ using s64 = int64_t;
 
 using f32 = float;
 using f64 = double;
+
+template<typename T>
+using scope = std::unique_ptr<T>; // may change to my own type of unique ptr
+
+template<typename T>
+using uptr = std::unique_ptr<T>; // will always be std::unique_ptr
+
+template<typename T>
+using ref = std::shared_ptr<T>; // may change to my own type of shared ptr
+
+template<typename T>
+using sptr = std::shared_ptr<T>; // will always be std::shared_ptr
+
+template<typename T, typename... Args>
+constexpr scope<T> create_scope(Args&&... args)
+{
+    return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+template<typename T, typename... Args>
+constexpr uptr<T> create_uptr(Args&&... args)
+{
+    return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+template<typename T, typename... Args>
+constexpr ref<T> create_ref(Args&&... args)
+{
+    return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
+template<typename T, typename... Args>
+constexpr sptr<T> create_sptr(Args&&... args)
+{
+    return std::make_shared<T>(std::forward<Args>(args)...);
+}

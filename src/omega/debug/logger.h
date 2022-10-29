@@ -15,17 +15,39 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: common.h
-// Date File Created: 10/21/2022
+// File Name: logger.h
+// Date File Created: 10/28/2022
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
 
 #pragma once
 
-#include "types.h"
-#include "omega/util/math.h"
-#include "omega/util/util.h"
-#include "omega/debug/logger.h"
+#include "omega/core/types.h"
 
-#include <cassert>
+#pragma warning(push, 0)
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
+#pragma warning(pop)
+
+namespace omega
+{
+
+class logger
+{
+public:
+    static void init();
+
+    static sptr<spdlog::logger>& get_logger() { return s_logger; }
+private:
+    static sptr<spdlog::logger> s_logger;
+};
+
+} // namespace omega
+
+
+#define OTRACE(...) omega::logger::get_logger()->trace(__VA_ARGS__)
+#define OINFO(...) omega::logger::get_logger()->info(__VA_ARGS__)
+#define OWARN(...) omega::logger::get_logger()->warn(__VA_ARGS__)
+#define OERROR(...) omega::logger::get_logger()->error(__VA_ARGS__)
+#define OFATAL(...) omega::logger::get_logger()->critical(__VA_ARGS__)

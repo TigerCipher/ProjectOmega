@@ -22,12 +22,9 @@
 // ------------------------------------------------------------------------------
 #include "spritecomponent.h"
 
-#include <iostream>
-
 #include "entity.h"
 #include "omega/core/game.h"
 
-#include <stdexcept>
 #include <SDL2/SDL.h>
 
 namespace omega
@@ -37,11 +34,11 @@ sprite_component::sprite_component(entity* parent, s32 draw_order) : component(p
     m_parent->get_game()->add_sprite(this);
 }
 
-sprite_component::~sprite_component() { m_parent->get_game()->remove_sprite(this); }
+sprite_component::~sprite_component()
+{
+    m_parent->get_game()->remove_sprite(this);
+}
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cppcoreguidelines-narrowing-conversions"
-#pragma ide diagnostic ignored "bugprone-integer-division"
 void sprite_component::draw(SDL_Renderer* renderer)
 {
     if (!m_texture)
@@ -54,7 +51,6 @@ void sprite_component::draw(SDL_Renderer* renderer)
 
     SDL_RenderCopyEx(renderer, m_texture, nullptr, &r, -to_degrees(m_parent->rotation()), nullptr, SDL_FLIP_NONE);
 }
-#pragma clang diagnostic pop
 
 void sprite_component::set_texture(SDL_Texture* texture)
 {

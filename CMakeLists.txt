@@ -20,7 +20,7 @@ add_executable(ProjectOmegaExe src/omega/core/common.h
         src/omega/ecs/component.cpp
         src/omega/ecs/entity.cpp
         src/omega/ecs/spritecomponent.cpp
-        src/omega/main.cpp src/omega/util/math.h src/omega/core/types.h)
+        src/omega/main.cpp src/omega/util/math.h src/omega/core/types.h src/omega/debug/logger.cpp src/omega/debug/logger.h)
 
 target_link_directories(ProjectOmegaExe PRIVATE ${PROJECT_SOURCE_DIR}/vendor/SDL2)
 target_link_libraries(ProjectOmegaExe PRIVATE ${LIBS} spdlog::spdlog)

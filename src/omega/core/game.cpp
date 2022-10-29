@@ -23,11 +23,8 @@
 
 #include "game.h"
 
-#include <format>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
-#include <iostream>
 
 #include "omega/ecs/entity.h"
 #include "omega/ecs/spritecomponent.h"
@@ -59,21 +56,21 @@ class asteroid : public entity
     sprite_component* m_sprite;
 };
 
-game::game() : m_window(nullptr), m_running(true), m_ball_pos(1000.0f / 2.0f, 800.0f / 2.0f) {}
+game::game() : m_window(nullptr), m_running(true), m_ball_pos{1000.0f / 2.0f, 800.0f / 2.0f} {}
 
 bool game::initialize()
 {
     s32 err = SDL_Init(SDL_INIT_VIDEO);
     if (err)
     {
-        std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
+        OERROR("Failed to initialize SDL: {}", SDL_GetError());
         return false;
     }
     m_window = SDL_CreateWindow("Project Omega", 200, 200, window_width, window_height, 0);
 
     if (!m_window)
     {
-        std::cerr << "Failed to create window: " << SDL_GetError() << std::endl;
+        OERROR("Failed to create window: {}", SDL_GetError());
         return false;
     }
 
@@ -81,14 +78,14 @@ bool game::initialize()
     m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!m_renderer)
     {
-        std::cerr << "Failed to create renderer: " << SDL_GetError() << std::endl;
+        OERROR("Failed to create renderer: {}", SDL_GetError());
         return false;
     }
 
     err = IMG_Init(IMG_INIT_PNG);
     if (!err)
     {
-        std::cerr << "Failed to initialize SDL Image\n";
+        OERROR("Failed to initialize SDL Image");
         return false;
     }
 
@@ -108,13 +105,13 @@ void game::run()
         render();
         u32         frame_time = SDL_GetTicks() - start_time;
         f32         fps        = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
-        std::string title      = std::format("Project Omega - FPS: {:.5f}", fps);
+        std::string title      = fmt::format("Project Omega - FPS: {:.5f}", fps); // using fmt instead of std::format since not all compilers support std::format as of this writing
         SDL_SetWindowTitle(m_window, title.c_str());
 
         u32 elapsed = SDL_GetTicks() - st;
         if (elapsed >= 1000)
         {
-            std::cerr << "FPS: " << fps << std::endl;
+            fmt::print("FPS: {:.5f}\n", fps);
             st = SDL_GetTicks();
         }
     }
@@ -323,7 +320,7 @@ SDL_Texture* game::load_texture(const char* filename)
     SDL_Surface* surf = IMG_Load(filename);
     if (!surf)
     {
-        std::cerr << "Failed to load texture file " << filename << std::endl;
+        OERROR("Failed to load texture file [{}]", filename);
         return nullptr;
     }
 
@@ -331,7 +328,7 @@ SDL_Texture* game::load_texture(const char* filename)
     SDL_FreeSurface(surf);
     if (!tex)
     {
-        std::cerr << "Failed to convert surface to texture - " << filename << std::endl;
+        OERROR("Failed to convert surface to texture [{}]", filename);
         return nullptr;
     }
 

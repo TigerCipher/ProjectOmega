@@ -15,17 +15,26 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: common.h
-// Date File Created: 10/21/2022
+// File Name: logger.cpp
+// Date File Created: 10/28/2022
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
 
-#pragma once
+#include "logger.h"
 
-#include "types.h"
-#include "omega/util/math.h"
-#include "omega/util/util.h"
-#include "omega/debug/logger.h"
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
-#include <cassert>
+namespace omega
+{
+sptr<spdlog::logger> logger::s_logger;
+
+void logger::init()
+{
+    spdlog::set_pattern("%^[%T] [%n] [%l] %v%$");
+    s_logger = spdlog::stdout_color_mt("Project Omega");
+    s_logger->set_level(spdlog::level::trace);
+}
+
+} // namespace omega
