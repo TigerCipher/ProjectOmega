@@ -25,7 +25,7 @@
 #include "entity.h"
 #include "omega/core/game.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 namespace omega
 {

@@ -3,13 +3,19 @@ project(ProjectOmega)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+#set(LIBS SDL2.lib SDL2main.lib SDL2_Image.lib)
+#set(SPDLOG_DIR ${PROJECT_SOURCE_DIR}/vendor)
 
-set(LIBS SDL2.lib SDL2main.lib SDL2_Image.lib)
-set(SPDLOG_DIR ${PROJECT_SOURCE_DIR}/vendor)
+#list(APPEND CMAKE_PREFIX_PATH "${SPDLOG_DIR}")
 
-list(APPEND CMAKE_PREFIX_PATH "${SPDLOG_DIR}")
+#find_package(spdlog REQUIRED)
 
-find_package(spdlog REQUIRED)
+add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/SDL)
+add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/SDL_Image)
+add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/spdlog)
 
 add_executable(ProjectOmegaExe src/omega/core/common.h
         src/omega/core/game.h
@@ -22,7 +28,7 @@ add_executable(ProjectOmegaExe src/omega/core/common.h
         src/omega/ecs/spritecomponent.cpp
         src/omega/main.cpp src/omega/util/math.h src/omega/core/types.h src/omega/debug/logger.cpp src/omega/debug/logger.h)
 
-target_link_directories(ProjectOmegaExe PRIVATE ${PROJECT_SOURCE_DIR}/vendor/SDL2)
-target_link_libraries(ProjectOmegaExe PRIVATE ${LIBS} spdlog::spdlog)
+#target_link_directories(ProjectOmegaExe PRIVATE ${PROJECT_SOURCE_DIR}/vendor/SDL2)
+target_link_libraries(ProjectOmegaExe PRIVATE spdlog SDL2 SDL2main SDL2_image)
 # ${PROJECT_SOURCE_DIR}/vendor/spdlog/include
-target_include_directories(ProjectOmegaExe PUBLIC ${PROJECT_SOURCE_DIR}/vendor/SDL2/include ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(ProjectOmegaExe PUBLIC ${PROJECT_SOURCE_DIR}/vendor/spdlog/include ${PROJECT_SOURCE_DIR}/vendor/SDL/include ${PROJECT_SOURCE_DIR}/src)
