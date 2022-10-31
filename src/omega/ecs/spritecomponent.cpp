@@ -49,7 +49,7 @@ void sprite_component::draw(SDL_Renderer* renderer)
     r.x = (int) (m_parent->position().x - r.w / 2);
     r.y = (int) (m_parent->position().y - r.h / 2);
 
-    SDL_RenderCopyEx(renderer, m_texture, nullptr, &r, -to_degrees(m_parent->rotation()), nullptr, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, m_texture, nullptr, &r, -math::to_degrees(m_parent->rotation()), nullptr, SDL_FLIP_NONE);
 }
 
 void sprite_component::set_texture(SDL_Texture* texture)
