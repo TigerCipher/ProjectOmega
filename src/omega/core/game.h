@@ -21,7 +21,7 @@
 //
 // ------------------------------------------------------------------------------
 #pragma once
-#include "common.h"
+#include "omega/common.h"
 
 #include <unordered_map>
 
@@ -37,7 +37,7 @@ class sprite_component;
 
 class game
 {
-  public:
+public:
     game();
 
     bool initialize();
@@ -52,7 +52,7 @@ class game
 
     SDL_Texture* get_texture(const char* filename);
 
-  private:
+private:
     void process_input();
     void update();
     void render();
@@ -61,23 +61,18 @@ class game
 
     SDL_Window* m_window;
     bool        m_running = false;
+    u32         m_ticks   = 0;
 
     utl::vector<entity*> m_entities;
     utl::vector<entity*> m_pending_entities;
     bool                 m_updating_entities = false;
 
     std::unordered_map<std::string, SDL_Texture*> m_textures;
-    utl::vector<sprite_component*> m_sprites;
+    utl::vector<sprite_component*>                m_sprites;
 
     // Temporary
     SDL_Renderer* m_renderer;
 
-    vec2 m_ball_pos;
-    vec2 m_left_paddle_pos{0.0f, 800.0f / 2.0f};
-    vec2 m_right_paddle_pos{1000.0f - 15.0f, 800.0f / 2.0f};
-    u32  m_ticks            = 0;
-    s32  m_left_paddle_dir  = 0;
-    s32  m_right_paddle_dir = 0;
-    vec2 m_ball_vel{-200.0f, 235.0f};
+    class ship* m_ship;
 };
 } // namespace omega

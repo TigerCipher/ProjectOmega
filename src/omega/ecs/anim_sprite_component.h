@@ -15,30 +15,38 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: component.h
-// Date File Created: 10/22/2022
+// File Name: anim_sprite_component.h
+// Date File Created: 10/31/2022
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
+
 #pragma once
 
 #include "omega/common.h"
+#include "spritecomponent.h"
+
 
 namespace omega
 {
 class entity;
-
-class component
+class anim_sprite_component : public sprite_component
 {
-  public:
-    explicit component(entity* parent, s32 update_order = 100);
-    virtual ~component();
+public:
+    anim_sprite_component(entity* parent, s32 draw_order = 100) : sprite_component(parent, draw_order) {}
 
-    virtual void update(f32 delta);
-    s32          get_update_order() const { return m_update_order; }
+    void update(f32 delta) override;
 
-  protected:
-    entity* m_parent;
-    s32     m_update_order;
+    void set_textures(const utl::vector<SDL_Texture*>& textures);
+
+    float fps() const { return m_anim_fps; }
+
+    void set_fps(const float fps) { m_anim_fps = fps; }
+
+private:
+    utl::vector<SDL_Texture*> m_anim_textures;
+    float                     m_current_frame = 0.0f;
+    float                     m_anim_fps      = 24.0f;
 };
+
 } // namespace omega

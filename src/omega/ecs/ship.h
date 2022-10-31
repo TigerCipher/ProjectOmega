@@ -15,30 +15,33 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: component.h
-// Date File Created: 10/22/2022
+// File Name: ship.h
+// Date File Created: 10/31/2022
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
+
 #pragma once
-
-#include "omega/common.h"
-
+#include "entity.h"
 namespace omega
 {
-class entity;
 
-class component
+class ship : public entity
 {
-  public:
-    explicit component(entity* parent, s32 update_order = 100);
-    virtual ~component();
+public:
+    ship(game* game);
+    void update_entity(f32 delta) override;
 
-    virtual void update(f32 delta);
-    s32          get_update_order() const { return m_update_order; }
+    void process_keyboard(const u8* state);
+    f32 right_speed() const { return m_right_speed; }
+    f32 down_speed() const { return m_down_speed; }
 
-  protected:
-    entity* m_parent;
-    s32     m_update_order;
+private:
+    f32 m_right_speed = 0;
+    f32 m_down_speed = 0;
+
 };
-} // namespace omega
+
+}
+
+

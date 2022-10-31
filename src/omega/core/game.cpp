@@ -28,10 +28,11 @@
 
 #include "omega/ecs/entity.h"
 #include "omega/ecs/spritecomponent.h"
+#include "omega/ecs/ship.h"
+#include "omega/ecs/background_sprite_component.h"
 
 namespace
 {
-s32 thickness     = 15;
 s32 window_width  = 1000;
 s32 window_height = 800;
 
@@ -40,23 +41,8 @@ s32 window_height = 800;
 namespace omega
 {
 
-class asteroid : public entity
-{
-  public:
-    asteroid(game* game) : entity(game)
-    {
-        m_sprite = new sprite_component(this);
-        m_sprite->set_texture(game->get_texture("./assets/sprites/asteroid.png"));
-        set_position({100, 100});
-    }
-    virtual ~asteroid() { delete m_sprite; }
-    void update_entity(f32 delta) override {}
 
-  private:
-    sprite_component* m_sprite;
-};
-
-game::game() : m_window(nullptr), m_running(true), m_ball_pos{1000.0f / 2.0f, 800.0f / 2.0f} {}
+game::game() : m_window(nullptr), m_running(true) {}
 
 bool game::initialize()
 {
@@ -89,8 +75,32 @@ bool game::initialize()
         return false;
     }
 
+    m_ticks = SDL_GetTicks();
     // Load game data
-    add_entity(new asteroid(this));
+    m_ship = new ship(this);
+    m_ship->set_position({100.0f, 384.0f});
+    m_ship->set_scale(1.5f);
+
+    auto* temp = new entity(this);
+    temp->set_position({512,384});
+    auto* bg = new background_sprite_component(temp);
+    bg->set_screen_size({(f32)window_width, (f32)window_height});
+    utl::vector<SDL_Texture*> bgtex = {
+        get_texture("./assets/sprites/bg01.png"),
+        get_texture("./assets/sprites/bg02.png"),
+    };
+    bg->set_textures(bgtex);
+    bg->set_scroll_speed(-100.0f);
+
+    bg = new background_sprite_component(temp, 50);
+    bg->set_screen_size({(f32)window_width, (f32)window_height});
+    bgtex = {
+        get_texture("./assets/sprites/stars.png"),
+        get_texture("./assets/sprites/stars.png"),
+    };
+    bg->set_textures(bgtex);
+    bg->set_scroll_speed(-200.0f);
+
     return true;
 }
 
@@ -194,18 +204,8 @@ void game::process_input()
     if (key_state [ SDL_SCANCODE_ESCAPE ])
         m_running = false;
 
-    m_left_paddle_dir = 0;
-    if (key_state [ SDL_SCANCODE_W ])
-        --m_left_paddle_dir;
-    if (key_state [ SDL_SCANCODE_S ])
-        ++m_left_paddle_dir;
+    m_ship->process_keyboard(key_state);
 
-    m_right_paddle_dir = 0;
-    if (key_state [ SDL_SCANCODE_UP ])
-        --m_right_paddle_dir;
-    if (key_state [ SDL_SCANCODE_DOWN ])
-        ++m_right_paddle_dir;
-    // if (key_state [ SDL_SCANCODE_D ]) __debugbreak();
 }
 
 void game::update()
@@ -213,7 +213,7 @@ void game::update()
     // while (!SDL_TICKS_PASSED(SDL_GetTicks(), m_ticks + 16))
     //     ;
 
-    f32 delta = (SDL_GetTicks() - m_ticks) / 1000.0f;
+    f32 delta = (SDL_GetTicks() - (f32)m_ticks) / 1000.0f;
     m_ticks   = SDL_GetTicks();
 
     if (delta > 0.05f)
@@ -249,61 +249,12 @@ void game::update()
     {
         delete ent;
     }
-
-
-    if (m_left_paddle_dir)
-    {
-        m_left_paddle_pos.y += m_left_paddle_dir * 300.0f * delta;
-        if (m_left_paddle_pos.y < 100 / 2.0f + thickness) // paddle height / 2 + paddle width
-            m_left_paddle_pos.y = 100 / 2.0f + thickness;
-        else if (m_left_paddle_pos.y > 800 - 100 / 2.0f - thickness)
-            m_left_paddle_pos.y = 800 - 100 / 2.0f - 15;
-    }
-
-    if (m_right_paddle_dir)
-    {
-        m_right_paddle_pos.y += m_right_paddle_dir * 300.0f * delta;
-        if (m_right_paddle_pos.y < 100 / 2.0f + thickness) // paddle height / 2 + paddle width
-            m_right_paddle_pos.y = 100 / 2.0f + thickness;
-        else if (m_right_paddle_pos.y > 800 - 100 / 2.0f - thickness)
-            m_right_paddle_pos.y = 800 - 100 / 2.0f - 15;
-    }
-
-    m_ball_pos.x += m_ball_vel.x * delta;
-    m_ball_pos.y += m_ball_vel.y * delta;
-
-    if (m_ball_pos.y <= thickness && m_ball_vel.y < 0)
-        m_ball_vel.y = -m_ball_vel.y;
-    if (m_ball_pos.y >= window_height - thickness && m_ball_vel.y > 0)
-        m_ball_vel.y = -m_ball_vel.y;
-    f32 diff = abs(m_ball_pos.y - m_left_paddle_pos.y);
-    if (diff <= 100 / 2.0f && m_ball_pos.x <= 25.0f && m_ball_pos.x >= 20.0f && m_ball_vel.x < 0)
-        m_ball_vel.x = -m_ball_vel.x;
-    diff = abs(m_ball_pos.y - m_right_paddle_pos.y);
-    if (diff <= 100 / 2.0f && m_ball_pos.x >= (window_width - 25) && m_ball_pos.x <= (window_width - 20) &&
-        m_ball_vel.x > 0)
-        m_ball_vel.x = -m_ball_vel.x;
 }
 
 void game::render()
 {
     SDL_SetRenderDrawColor(m_renderer, 52, 15, 15, 255);
     SDL_RenderClear(m_renderer);
-
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-    SDL_Rect top_wall{0, 0, window_width, thickness};
-    SDL_Rect bottom_wall{0, window_height - thickness, window_width, thickness};
-    SDL_RenderFillRect(m_renderer, &top_wall);
-    SDL_RenderFillRect(m_renderer, &bottom_wall);
-
-    SDL_Rect ball{(int) m_ball_pos.x - thickness / 2, (int) m_ball_pos.y - thickness / 2, thickness, thickness};
-    SDL_Rect left_paddle{(int) m_left_paddle_pos.x - thickness / 2, (int) m_left_paddle_pos.y - 100 / 2, thickness,
-                         100};
-    SDL_Rect right_paddle{(int) m_right_paddle_pos.x - thickness / 2, (int) m_right_paddle_pos.y - 100 / 2, thickness,
-                          100};
-    SDL_RenderFillRect(m_renderer, &ball);
-    SDL_RenderFillRect(m_renderer, &left_paddle);
-    SDL_RenderFillRect(m_renderer, &right_paddle);
 
 
     for (auto* spr : m_sprites)

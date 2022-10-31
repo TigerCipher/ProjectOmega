@@ -17,7 +17,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/SDL)
 add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/SDL_Image)
 add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/spdlog)
 
-add_executable(ProjectOmegaExe src/omega/core/common.h
+add_executable(ProjectOmegaExe src/omega/common.h
         src/omega/core/game.h
         src/omega/ecs/component.h
         src/omega/ecs/entity.h
@@ -26,7 +26,7 @@ add_executable(ProjectOmegaExe src/omega/core/common.h
         src/omega/ecs/component.cpp
         src/omega/ecs/entity.cpp
         src/omega/ecs/spritecomponent.cpp
-        src/omega/main.cpp src/omega/util/math.h src/omega/core/types.h src/omega/debug/logger.cpp src/omega/debug/logger.h)
+        src/omega/main.cpp src/omega/util/math.h src/omega/core/types.h src/omega/debug/logger.cpp src/omega/debug/logger.h src/omega/ecs/anim_sprite_component.cpp src/omega/ecs/anim_sprite_component.h src/omega/ecs/background_sprite_component.cpp src/omega/ecs/background_sprite_component.h src/omega/ecs/ship.cpp src/omega/ecs/ship.h)
 
 #target_link_directories(ProjectOmegaExe PRIVATE ${PROJECT_SOURCE_DIR}/vendor/SDL2)
 target_link_libraries(ProjectOmegaExe PRIVATE spdlog SDL2 SDL2main SDL2_image)
@@ -35,9 +35,9 @@ target_include_directories(ProjectOmegaExe PUBLIC ${PROJECT_SOURCE_DIR}/vendor/s
 
 target_compile_definitions(ProjectOmegaExe PRIVATE _CRT_SECURE_NO_WARNINGS PUBLIC $<$<CONFIG:Debug>:O_DEBUG>)
 
-if(MSVC)
+if (MSVC)
     target_compile_options(ProjectOmegaExe PRIVATE "/Zc:preprocessor")
-    endif()
+endif ()
 if (WIN32)
     target_compile_definitions(ProjectOmegaExe PRIVATE O_WINDOWS)
 elseif (UNIX)

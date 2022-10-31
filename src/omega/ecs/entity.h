@@ -22,7 +22,7 @@
 // ------------------------------------------------------------------------------
 #pragma once
 
-#include "omega/core/common.h"
+#include "omega/common.h"
 
 
 namespace omega
@@ -61,6 +61,8 @@ class entity
     f32  rotation() const { return m_rotation; }
 
     void set_position(const vec2& pos) { m_position = pos; }
+    void set_scale(const f32 scale) { m_scale = scale; }
+    void set_rotation(const f32 rot) { m_rotation = rot; }
 
   private:
     state                   m_state;
