@@ -35,6 +35,7 @@ int main(int argc, char** argv)
     OWARN("This is a test warning");
     OERROR("This is a test error");
     OFATAL("This is a test {} message", "fatal");
+    OASSERT(1 > 2, "test {}. {:.5f}", "test2", 5.435435345f);
     auto* game = new omega::game();
     if (!game->initialize())
     {

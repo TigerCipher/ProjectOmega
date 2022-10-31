@@ -32,3 +32,14 @@ add_executable(ProjectOmegaExe src/omega/core/common.h
 target_link_libraries(ProjectOmegaExe PRIVATE spdlog SDL2 SDL2main SDL2_image)
 # ${PROJECT_SOURCE_DIR}/vendor/spdlog/include
 target_include_directories(ProjectOmegaExe PUBLIC ${PROJECT_SOURCE_DIR}/vendor/spdlog/include ${PROJECT_SOURCE_DIR}/vendor/SDL/include ${PROJECT_SOURCE_DIR}/src)
+
+target_compile_definitions(ProjectOmegaExe PRIVATE _CRT_SECURE_NO_WARNINGS PUBLIC $<$<CONFIG:Debug>:O_DEBUG>)
+
+if(MSVC)
+    target_compile_options(ProjectOmegaExe PRIVATE "/Zc:preprocessor")
+    endif()
+if (WIN32)
+    target_compile_definitions(ProjectOmegaExe PRIVATE O_WINDOWS)
+elseif (UNIX)
+    target_compile_definitions(ProjectOmegaExe PRIVATE O_UNIX)
+endif ()

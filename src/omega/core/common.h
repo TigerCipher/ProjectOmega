@@ -28,4 +28,28 @@
 #include "omega/util/util.h"
 #include "omega/debug/logger.h"
 
-#include <cassert>
+#ifdef O_DEBUG
+    #ifdef _WINDOWS
+        #define DBG_BREAK() __debugbreak();
+    #elif defined(O_UNIX)
+        #include <signal.h>
+        #define DBG_BREAK() raise(SIGTRAP)
+    #else
+        #define DBG_BREAK() assert(true)
+    #endif
+#else
+    #define DBG_BREAK()
+#endif
+
+#ifdef O_DEBUG
+    #include <cassert>
+    #define OASSERT(condition, msg, ...)                                                                               \
+        if (!(condition))                                                                                              \
+        {                                                                                                              \
+            OFATAL("An assertion occurred with the failed condition: ({}). " msg,                                      \
+                   #condition __VA_OPT__(, ) __VA_ARGS__);                                                             \
+            DBG_BREAK();                                                                                               \
+        }
+#else
+    #define OASSERT(condition, msg, ...)
+#endif
