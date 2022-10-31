@@ -1,6 +1,7 @@
 [submodule "vendor/spdlog"]
 	path = vendor/spdlog
 	url = https://github.com/gabime/spdlog
+	ignore = dirty
 [submodule "vendor/SDL"]
 	path = vendor/SDL
 	url = https://github.com/libsdl-org/SDL
