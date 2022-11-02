@@ -29,13 +29,12 @@
 int main(int argc, char** argv)
 {
     omega::logger::init();
-    std::cout << "Hello World!\n";
     OTRACE("This is a test trace message");
     OINFO("This is just a test message");
     OWARN("This is a test warning");
     OERROR("This is a test error");
     OFATAL("This is a test {} message", "fatal");
-//    OASSERT(1 > 2, "test {}. {:.5f}", "test2", 5.435435345f);
+    //    OASSERT(1 > 2, "test {}. {:.5f}", "test2", 5.435435345f);
     auto* game = new omega::game();
     if (!game->initialize())
     {

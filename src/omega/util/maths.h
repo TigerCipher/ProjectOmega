@@ -330,9 +330,9 @@ public:
     vector4() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {} // NOLINT(cppcoreguidelines-pro-type-member-init)
 
     constexpr vector4(f32 _x, f32 _y, f32 _z, f32 _w) : x(_x), y(_y), z(_z), w(_w) {} // NOLINT(cppcoreguidelines-pro-type-member-init)
-    //clang-format on
+    // clang-format on
 
-    vector4(const vector3& axis, const f32 angle)  // NOLINT(cppcoreguidelines-pro-type-member-init)
+    vector4(const vector3& axis, const f32 angle) // NOLINT(cppcoreguidelines-pro-type-member-init)
     {
         const f32 scalar = math::sin(angle * 0.5f);
         x                = axis.x * scalar;
@@ -555,7 +555,6 @@ vector4 concatinate(const vector4& q, const vector4& p);
 
 } // namespace math
 
-
 constexpr vector2 zero_vec2{0, 0};
 constexpr vector2 unitx_vec2{1, 0};
 constexpr vector2 unity_vec2{0, 1};
@@ -578,6 +577,6 @@ constexpr vector4 idenity_vec4{0, 0, 0, 1};
 
 using vec4       = vector4;
 using quaternion = vector4;
-
+using color4     = vector4;
 
 } // namespace omega
