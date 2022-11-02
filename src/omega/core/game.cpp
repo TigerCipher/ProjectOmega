@@ -31,6 +31,8 @@
 #include "omega/ecs/ship.h"
 #include "omega/ecs/background_sprite_component.h"
 
+#include <ranges>
+
 namespace
 {
 s32 window_width  = 1000;
@@ -41,8 +43,6 @@ s32 window_height = 800;
 namespace omega
 {
 
-
-game::game() : m_window(nullptr), m_running(true) {}
 
 bool game::initialize()
 {
@@ -82,9 +82,9 @@ bool game::initialize()
     m_ship->set_scale(1.5f);
 
     auto* temp = new entity(this);
-    temp->set_position({512,384});
+    temp->set_position({512, 384});
     auto* bg = new background_sprite_component(temp);
-    bg->set_screen_size({(f32)window_width, (f32)window_height});
+    bg->set_screen_size({(f32) window_width, (f32) window_height});
     utl::vector<SDL_Texture*> bgtex = {
         get_texture("./assets/sprites/bg01.png"),
         get_texture("./assets/sprites/bg02.png"),
@@ -93,7 +93,7 @@ bool game::initialize()
     bg->set_scroll_speed(-100.0f);
 
     bg = new background_sprite_component(temp, 50);
-    bg->set_screen_size({(f32)window_width, (f32)window_height});
+    bg->set_screen_size({(f32) window_width, (f32) window_height});
     bgtex = {
         get_texture("./assets/sprites/stars.png"),
         get_texture("./assets/sprites/stars.png"),
@@ -109,13 +109,15 @@ void game::run()
     u32 st = SDL_GetTicks();
     while (m_running)
     {
-        u32 start_time = SDL_GetTicks();
+        const u32 start_time = SDL_GetTicks();
         process_input();
         update();
         render();
-        u32         frame_time = SDL_GetTicks() - start_time;
+        const u32   frame_time = SDL_GetTicks() - start_time;
         f32         fps        = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
-        std::string title      = fmt::format("Project Omega - FPS: {:.5f}", fps); // using fmt instead of std::format since not all compilers support std::format as of this writing
+        std::string title      = fmt::format(
+                 "Project Omega - FPS: {:.5f}",
+                 fps); // using fmt instead of std::format since not all compilers support std::format as of this writing
         SDL_SetWindowTitle(m_window, title.c_str());
 
         u32 elapsed = SDL_GetTicks() - st;
@@ -127,7 +129,7 @@ void game::run()
     }
 }
 
-void game::shutdown()
+void game::shutdown() const
 {
     IMG_Quit();
     SDL_DestroyRenderer(m_renderer);
@@ -145,7 +147,7 @@ void game::add_entity(entity* ent)
 
 void game::remove_entity(entity* ent)
 {
-    auto it = std::find(m_pending_entities.begin(), m_pending_entities.end(), ent);
+    auto it = std::ranges::find(m_pending_entities, ent);
     if (it != m_pending_entities.end())
     {
         // Move entity to end of vector and pop off, this helps us avoid erase copies
@@ -205,7 +207,6 @@ void game::process_input()
         m_running = false;
 
     m_ship->process_keyboard(key_state);
-
 }
 
 void game::update()
@@ -213,7 +214,7 @@ void game::update()
     // while (!SDL_TICKS_PASSED(SDL_GetTicks(), m_ticks + 16))
     //     ;
 
-    f32 delta = (SDL_GetTicks() - (f32)m_ticks) / 1000.0f;
+    f32 delta = (SDL_GetTicks() - (f32) m_ticks) / 1000.0f;
     m_ticks   = SDL_GetTicks();
 
     if (delta > 0.05f)

@@ -32,7 +32,8 @@ namespace omega
 
 ship::ship(game* game) : entity(game)
 {
-    anim_sprite_component*    asc   = new anim_sprite_component(this);
+    auto* asc = new anim_sprite_component(this);
+
     utl::vector<SDL_Texture*> anims = {
         game->get_texture("./assets/sprites/ship01.png"),
         game->get_texture("./assets/sprites/ship02.png"),

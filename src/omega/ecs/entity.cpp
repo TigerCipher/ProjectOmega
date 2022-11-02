@@ -26,6 +26,8 @@
 #include "component.h"
 #include "omega/core/game.h"
 
+#include <ranges>
+
 namespace omega
 {
 entity::entity(game* game) : m_state(ACTIVE), m_game(game), m_position({0, 0}), m_scale(1.0f), m_rotation(0.0f)

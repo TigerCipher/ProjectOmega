@@ -38,11 +38,11 @@ class sprite_component;
 class game
 {
 public:
-    game();
+    game() = default;
 
     bool initialize();
     void run();
-    void shutdown();
+    void shutdown() const;
 
     void add_entity(entity* ent);
     void remove_entity(entity* ent);
@@ -59,8 +59,8 @@ private:
 
     SDL_Texture* load_texture(const char* filename);
 
-    SDL_Window* m_window;
-    bool        m_running = false;
+    SDL_Window* m_window  = nullptr;
+    bool        m_running = true;
     u32         m_ticks   = 0;
 
     utl::vector<entity*> m_entities;
@@ -71,7 +71,7 @@ private:
     utl::vector<sprite_component*>                m_sprites;
 
     // Temporary
-    SDL_Renderer* m_renderer;
+    SDL_Renderer* m_renderer = nullptr;
 
     class ship* m_ship;
 };

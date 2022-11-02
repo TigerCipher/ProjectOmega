@@ -118,11 +118,13 @@ inline f32 sqrt(f32 val)
 class vector2
 {
 public:
-    f32 x = 0.0f;
-    f32 y = 0.0f;
+    // clang-format off
+    union { f32 x, r, s; };
+    union { f32 y, g, t; };
+    // clang-format on
 
     vector2() = default;
-    constexpr vector2(f32 _x, f32 _y) : x(_x), y(_y) {}
+    constexpr vector2(f32 _x, f32 _y) : x(_x), y(_y) {} // NOLINT(cppcoreguidelines-pro-type-member-init)
 
     friend vector2 operator+(const vector2& a, const vector2& b) { return {a.x + b.x, a.y + b.y}; }
 
