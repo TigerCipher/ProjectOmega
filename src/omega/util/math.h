@@ -119,12 +119,14 @@ class vector2
 {
 public:
     // clang-format off
-    union { f32 x, r, s; };
-    union { f32 y, g, t; };
+    union { f32 x, r, u; };
+    union { f32 y, g, v; };
     // clang-format on
 
     vector2() = default;
     constexpr vector2(f32 _x, f32 _y) : x(_x), y(_y) {} // NOLINT(cppcoreguidelines-pro-type-member-init)
+
+    const f32* data() const { return &x; }
 
     friend vector2 operator+(const vector2& a, const vector2& b) { return {a.x + b.x, a.y + b.y}; }
 
@@ -202,9 +204,122 @@ public:
 
     vector2& normalize()
     {
-        f32 len = length();
+        const f32 len = length();
         x /= len;
         y /= len;
+        return *this;
+    }
+};
+
+class vector3
+{
+public:
+    union
+    {
+        f32 x, r;
+    };
+    union
+    {
+        f32 y, g;
+    };
+    union
+    {
+        f32 z, b;
+    };
+
+    vector3() = default;
+    constexpr vector3(f32 _x, f32 _y, f32 _z) : x(_x), y(_y), z(_z) {} // NOLINT(cppcoreguidelines-pro-type-member-init)
+
+    const f32* data() const { return &x; }
+
+    friend vector3 operator+(const vector3& a, const vector3& b) { return {a.x + b.x, a.y + b.y, a.z + b.z}; }
+
+    friend vector3 operator-(const vector3& a, const vector3& b) { return {a.x - b.x, a.y - b.y, a.z - b.z}; }
+
+    friend vector3 operator*(const vector3& a, const vector3& b) { return {a.x * b.x, a.y * b.y, a.z * b.z}; }
+
+    friend vector3 operator/(const vector3& a, const vector3& b) { return {a.x / b.x, a.y / b.y, a.x / b.x}; }
+
+    friend vector3 operator*(const vector3& v, f32 scalar) { return {v.x * scalar, v.y * scalar, v.z * scalar}; }
+
+    friend vector3 operator*(f32 scalar, const vector3& v) { return {v.x * scalar, v.y * scalar, v.z * scalar}; }
+
+    friend vector3 operator/(const vector3& v, f32 scalar) { return {v.x / scalar, v.y / scalar, v.z / scalar}; }
+
+    vector3& operator+=(const vector3& right)
+    {
+        x += right.x;
+        y += right.y;
+        z += right.z;
+        return *this;
+    }
+
+    vector3& operator-=(const vector3& right)
+    {
+        x -= right.x;
+        y -= right.y;
+        z -= right.z;
+        return *this;
+    }
+
+    vector3& operator*=(const vector3& right)
+    {
+        x *= right.x;
+        y *= right.y;
+        z *= right.z;
+        return *this;
+    }
+
+    vector3& operator/=(const vector3& right)
+    {
+        x /= right.x;
+        y /= right.y;
+        z /= right.z;
+        return *this;
+    }
+
+    vector3& operator+=(f32 scalar)
+    {
+        x += scalar;
+        y += scalar;
+        z += scalar;
+        return *this;
+    }
+
+    vector3& operator-=(f32 scalar)
+    {
+        x -= scalar;
+        y -= scalar;
+        z -= scalar;
+        return *this;
+    }
+
+    vector3& operator*=(f32 scalar)
+    {
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
+        return *this;
+    }
+
+    vector3& operator/=(f32 scalar)
+    {
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
+        return *this;
+    }
+
+    f32 length() const { return math::sqrt(length_sq()); }
+
+    f32 length_sq() const { return x * x + y * y + z * z; }
+
+    vector3& normalize()
+    {
+        const f32 len = length();
+        x /= len;
+        y /= len;
+        z /= len;
         return *this;
     }
 };
@@ -234,6 +349,36 @@ inline vector2 reflect(const vector2& v, const vector2& n)
     return v - 2.0f * dot(v, n) * n;
 }
 
+inline vector3 normalize(const vector3& v)
+{
+    vector3 temp = v;
+    return temp.normalize();
+}
+
+inline f32 dot(const vector3& a, const vector3& b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+inline vector3 cross(const vector3& a, const vector3& b)
+{
+    vector3 temp{};
+    temp.x = a.y * b.z - a.z * b.y;
+    temp.y = a.z * b.x - a.x * b.z;
+    temp.z = a.x * b.y - a.y * b.x;
+    return temp;
+}
+
+inline vector3 lerp(const vector3& a, const vector3& b, f32 f)
+{
+    return a + f * (b - a);
+}
+
+inline vector3 reflect(const vector3& v, const vector3& n)
+{
+    return v - 2.0f * dot(v, n) * n;
+}
+
 } // namespace math
 
 
@@ -245,12 +390,16 @@ constexpr vector2 neg_unity_vec2{0, -1};
 
 using vec2 = vector2;
 
-struct vec3
-{
-    f32 x = 0;
-    f32 y = 0;
-    f32 z = 0;
-};
+constexpr vector3 zero_vec3{0, 0, 0};
+constexpr vector3 unitx_vec3{1, 0, 0};
+constexpr vector3 unity_vec3{0, 1, 0};
+constexpr vector3 unitz_vec3{0, 0, 1};
+constexpr vector3 neg_unitx_vec3{-1, 0, 0};
+constexpr vector3 neg_unity_vec3{0, -1, 0};
+constexpr vector3 neg_unitz_vec3{0, 0, -1};
+
+using vec3 = vector3;
+
 
 struct vec4
 {
