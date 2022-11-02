@@ -24,7 +24,7 @@
 #pragma once
 
 #include "omega/core/types.h"
-#include "omega/util/math.h"
+#include "omega/util/maths.h"
 #include "omega/util/util.h"
 #include "omega/debug/logger.h"
 

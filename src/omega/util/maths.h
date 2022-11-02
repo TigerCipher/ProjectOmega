@@ -15,7 +15,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: math.h
+// File Name: maths.h
 // Date File Created: 10/28/2022
 // Author: Matt
 //
@@ -214,18 +214,11 @@ public:
 class vector3
 {
 public:
-    union
-    {
-        f32 x, r;
-    };
-    union
-    {
-        f32 y, g;
-    };
-    union
-    {
-        f32 z, b;
-    };
+    // clang-format off
+    union { f32 x, r; };
+    union { f32 y, g; };
+    union { f32 z, b; };
+    // clang-format on
 
     vector3() = default;
     constexpr vector3(f32 _x, f32 _y, f32 _z) : x(_x), y(_y), z(_z) {} // NOLINT(cppcoreguidelines-pro-type-member-init)
@@ -324,6 +317,163 @@ public:
     }
 };
 
+
+class vector4
+{
+public:
+    // clang-format off
+    union { f32 x, r; };
+    union { f32 y, g; };
+    union { f32 z, b; };
+    union { f32 w, a; };
+
+    vector4() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {} // NOLINT(cppcoreguidelines-pro-type-member-init)
+
+    constexpr vector4(f32 _x, f32 _y, f32 _z, f32 _w) : x(_x), y(_y), z(_z), w(_w) {} // NOLINT(cppcoreguidelines-pro-type-member-init)
+    //clang-format on
+
+    vector4(const vector3& axis, const f32 angle)  // NOLINT(cppcoreguidelines-pro-type-member-init)
+    {
+        const f32 scalar = math::sin(angle * 0.5f);
+        x                = axis.x * scalar;
+        y                = axis.y * scalar;
+        z                = axis.z * scalar;
+        w                = math::cos(angle * 0.5f);
+    }
+
+    const f32* data() const { return &x; }
+
+    friend vector4 operator+(const vector4& a, const vector4& b)
+    {
+        return {a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w};
+    }
+
+    friend vector4 operator-(const vector4& a, const vector4& b)
+    {
+        return {a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w};
+    }
+
+    friend vector4 operator*(const vector4& a, const vector4& b)
+    {
+        return {a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w};
+    }
+
+    friend vector4 operator/(const vector4& a, const vector4& b)
+    {
+        return {a.x / b.x, a.y / b.y, a.x / b.x, a.w / b.w};
+    }
+
+    friend vector4 operator*(const vector4& v, f32 scalar)
+    {
+        return {v.x * scalar, v.y * scalar, v.z * scalar, v.w * scalar};
+    }
+
+    friend vector4 operator*(f32 scalar, const vector4& v)
+    {
+        return {v.x * scalar, v.y * scalar, v.z * scalar, v.w * scalar};
+    }
+
+    friend vector4 operator/(const vector4& v, f32 scalar)
+    {
+        return {v.x / scalar, v.y / scalar, v.z / scalar, v.w / scalar};
+    }
+
+    vector4& operator+=(const vector4& right)
+    {
+        x += right.x;
+        y += right.y;
+        z += right.z;
+        w += right.w;
+        return *this;
+    }
+
+    vector4& operator-=(const vector4& right)
+    {
+        x -= right.x;
+        y -= right.y;
+        z -= right.z;
+        w -= right.w;
+        return *this;
+    }
+
+    vector4& operator*=(const vector4& right)
+    {
+        x *= right.x;
+        y *= right.y;
+        z *= right.z;
+        w *= right.w;
+        return *this;
+    }
+
+    vector4& operator/=(const vector4& right)
+    {
+        x /= right.x;
+        y /= right.y;
+        z /= right.z;
+        w /= right.w;
+        return *this;
+    }
+
+    vector4& operator+=(f32 scalar)
+    {
+        x += scalar;
+        y += scalar;
+        z += scalar;
+        w += scalar;
+        return *this;
+    }
+
+    vector4& operator-=(f32 scalar)
+    {
+        x -= scalar;
+        y -= scalar;
+        z -= scalar;
+        w -= scalar;
+        return *this;
+    }
+
+    vector4& operator*=(f32 scalar)
+    {
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
+        w *= scalar;
+        return *this;
+    }
+
+    vector4& operator/=(f32 scalar)
+    {
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
+        w /= scalar;
+        return *this;
+    }
+
+    f32 length() const { return math::sqrt(length_sq()); }
+
+    f32 length_sq() const { return x * x + y * y + z * z + w * w; }
+
+    vector4& normalize()
+    {
+        const f32 len = length();
+        x /= len;
+        y /= len;
+        z /= len;
+        z /= len;
+        return *this;
+    }
+
+
+    vector4& conjugate()
+    {
+        x = -x;
+        y = -y;
+        z = -z;
+        return *this;
+    }
+};
+
 namespace math
 {
 inline vector2 normalize(const vector2& v)
@@ -379,6 +529,30 @@ inline vector3 reflect(const vector3& v, const vector3& n)
     return v - 2.0f * dot(v, n) * n;
 }
 
+inline vector4 normalize(const vector4& v)
+{
+    vector4 temp = v;
+    return temp.normalize();
+}
+
+inline f32 dot(const vector4& a, const vector4& b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+}
+
+inline vector4 lerp(const vector4& a, const vector4& b, f32 f)
+{
+    vector4 temp{};
+    temp.x = lerp(a.x, b.x, f);
+    temp.y = lerp(a.y, b.y, f);
+    temp.z = lerp(a.z, b.z, f);
+    temp.w = lerp(a.w, b.w, f);
+    return temp.normalize();
+}
+
+vector4 slerp(const vector4& a, const vector4& b, f32 f);
+vector4 concatinate(const vector4& q, const vector4& p);
+
 } // namespace math
 
 
@@ -400,13 +574,10 @@ constexpr vector3 neg_unitz_vec3{0, 0, -1};
 
 using vec3 = vector3;
 
+constexpr vector4 idenity_vec4{0, 0, 0, 1};
 
-struct vec4
-{
-    f32 x = 0;
-    f32 y = 0;
-    f32 z = 0;
-    f32 w = 0;
-};
+using vec4       = vector4;
+using quaternion = vector4;
+
 
 } // namespace omega
