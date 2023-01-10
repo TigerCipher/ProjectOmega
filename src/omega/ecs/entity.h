@@ -64,6 +64,8 @@ class entity
     void set_scale(const f32 scale) { m_scale = scale; }
     void set_rotation(const f32 rot) { m_rotation = rot; }
 
+    vec2 forward() const { return {math::cos(m_rotation), -math::sin(m_rotation)}; }
+
   private:
     state                   m_state;
     game*                   m_game;

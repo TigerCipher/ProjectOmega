@@ -26,7 +26,7 @@ add_executable(ProjectOmegaExe src/omega/common.h
         src/omega/ecs/component.cpp
         src/omega/ecs/entity.cpp
         src/omega/ecs/spritecomponent.cpp
-        src/omega/main.cpp "src/omega/util/maths.h" src/omega/core/types.h src/omega/debug/logger.cpp src/omega/debug/logger.h src/omega/ecs/anim_sprite_component.cpp src/omega/ecs/anim_sprite_component.h src/omega/ecs/background_sprite_component.cpp src/omega/ecs/background_sprite_component.h src/omega/ecs/ship.cpp src/omega/ecs/ship.h "src/omega/util/maths.cpp")
+        src/omega/main.cpp "src/omega/util/maths.h" src/omega/core/types.h src/omega/debug/logger.cpp src/omega/debug/logger.h src/omega/ecs/anim_sprite_component.cpp src/omega/ecs/anim_sprite_component.h src/omega/ecs/background_sprite_component.cpp src/omega/ecs/background_sprite_component.h src/omega/ecs/ship.cpp src/omega/ecs/ship.h "src/omega/util/maths.cpp" src/omega/ecs/move_component.cpp src/omega/ecs/move_component.h src/omega/ecs/asteroid.cpp src/omega/ecs/asteroid.h src/omega/util/util.cpp src/omega/ecs/circle_component.cpp src/omega/ecs/circle_component.h)
 
 #target_link_directories(ProjectOmegaExe PRIVATE ${PROJECT_SOURCE_DIR}/vendor/SDL2)
 target_link_libraries(ProjectOmegaExe PRIVATE spdlog SDL2 SDL2main SDL2_image)

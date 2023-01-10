@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------------
 //
 // ProjectOmega
-//    Copyright 2022 Matthew Rogers
+//    Copyright 2023 Matthew Rogers
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -15,48 +15,29 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: util.h
-// Date File Created: 10/22/2022
+// File Name: asteroid.h
+// Date File Created: 1/10/2023
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
+
 #pragma once
 
-#include <random>
-#include "maths.h"
-#include "omega/core/types.h"
+#include "entity.h"
 
-#define USE_STL_VECTOR 1
-
-#if USE_STL_VECTOR
-    #include <vector>
-namespace omega::utl
+namespace omega
 {
-template<typename T>
-using vector = std::vector<T>;
 
-}
-#endif
-
-namespace omega::utl
-{
-class random
+class asteroid : public entity
 {
 public:
-    static void init();
+    asteroid(class game* game);
+    virtual ~asteroid();
 
-    static void seed(u32 seed);
-
-
-    // float between min and max
-    static f32 get_float(f32 min = 0.0f, f32 max = 1.0f);
-
-    static s32 get_int(s32 min, s32 max);
-
-    static vec2 vector(const vec2& min, const vec2& max);
-    static vec3 vector(const vec3& min, const vec3& max);
+    class circle_component* get_circle() { return m_circle; }
 
 private:
-    static std::mt19937 generator;
+    class circle_component* m_circle = nullptr;
 };
-} // namespace omega::utl
+
+} // namespace omega

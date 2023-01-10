@@ -46,8 +46,8 @@ void background_sprite_component::draw(SDL_Renderer* renderer)
         SDL_Rect r;
         r.w = (s32) m_screen_size.x;
         r.h = (s32) m_screen_size.y;
-        r.x = (s32) (m_parent->position().x - r.w / 2 + bg.offset.x);
-        r.y = (s32) (m_parent->position().y - r.h / 2 + bg.offset.y);
+        r.x = (s32) (m_parent->position().x - r.w / 2.0f + bg.offset.x);
+        r.y = (s32) (m_parent->position().y - r.h / 2.0f + bg.offset.y);
 
         SDL_RenderCopy(renderer, bg.texture, nullptr, &r);
     }

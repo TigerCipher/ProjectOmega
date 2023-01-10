@@ -50,6 +50,11 @@ public:
     void add_sprite(sprite_component* sprite);
     void remove_sprite(sprite_component* sprite);
 
+    void add_asteroid(class asteroid* asteroid);
+    void remove_asteroid(class asteroid* asteroid);
+
+    utl::vector<class asteroid*>& get_asteroids() { return m_asteroids; }
+
     SDL_Texture* get_texture(const char* filename);
 
 private:
@@ -69,6 +74,8 @@ private:
 
     std::unordered_map<std::string, SDL_Texture*> m_textures;
     utl::vector<sprite_component*>                m_sprites;
+
+    utl::vector<class asteroid*> m_asteroids;
 
     // Temporary
     SDL_Renderer* m_renderer = nullptr;

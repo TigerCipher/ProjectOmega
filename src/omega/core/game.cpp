@@ -30,6 +30,7 @@
 #include "omega/ecs/spritecomponent.h"
 #include "omega/ecs/ship.h"
 #include "omega/ecs/background_sprite_component.h"
+#include "omega/ecs/asteroid.h"
 
 #include <ranges>
 
@@ -101,6 +102,12 @@ bool game::initialize()
     bg->set_textures(bgtex);
     bg->set_scroll_speed(-200.0f);
 
+    const u32 num_asts = 20;
+    for (int i = 0; i < num_asts; ++i)
+    {
+        new asteroid(this);
+    }
+
     return true;
 }
 
@@ -116,8 +123,8 @@ void game::run()
         const u32   frame_time = SDL_GetTicks() - start_time;
         f32         fps        = (frame_time > 0) ? 1000.0f / frame_time : 0.0f;
         std::string title      = fmt::format(
-                 "Project Omega - FPS: {:.5f}",
-                 fps); // using fmt instead of std::format since not all compilers support std::format as of this writing
+            "Project Omega - FPS: {:.5f}",
+            fps); // using fmt instead of std::format since not all compilers support std::format as of this writing
         SDL_SetWindowTitle(m_window, title.c_str());
 
         u32 elapsed = SDL_GetTicks() - st;
@@ -285,5 +292,17 @@ SDL_Texture* game::load_texture(const char* filename)
     }
 
     return tex;
+}
+void game::add_asteroid(asteroid* asteroid)
+{
+    m_asteroids.emplace_back(asteroid);
+}
+void game::remove_asteroid(asteroid* asteroid)
+{
+    auto iter = std::find(m_asteroids.begin(), m_asteroids.end(), asteroid);
+    if (iter != m_asteroids.end())
+    {
+        m_asteroids.erase(iter);
+    }
 }
 } // namespace omega
