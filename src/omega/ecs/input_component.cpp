@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------------
 //
 // ProjectOmega
-//    Copyright 2022 Matthew Rogers
+//    Copyright 2023 Matthew Rogers
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -15,30 +15,40 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: ship.h
-// Date File Created: 10/31/2022
+// File Name: input_component.cpp
+// Date File Created: 1/10/2023
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
 
-#pragma once
+#include "input_component.h"
 #include "entity.h"
+
 namespace omega
 {
 
-class ship : public entity
+input_component::input_component(entity* entity) :
+    move_component(entity) {}
+
+void input_component::process_input(const u8* key_state)
 {
-public:
-    ship(class game* game);
-    void update_entity(f32 delta) override;
+    f32 forward_speed = 0.0f;
 
-    void input_entity(const u8* key_state) override;
+    if(key_state[m_key_forward])
+        forward_speed += m_max_forward_speed;
+    if(key_state[m_key_back])
+        forward_speed -= m_max_forward_speed;
 
-private:
-    f32 m_laser_cooldown = 0.0f;
+    set_forward_speed(forward_speed);
 
-};
+    f32 angular_speed = 0.0f;
 
+    if(key_state[m_key_cw])
+        angular_speed += m_max_angular_speed;
+    if(key_state[m_key_ccw])
+        angular_speed -= m_max_angular_speed;
+
+    set_angular_speed(angular_speed);
 }
 
-
+} // namespace omega

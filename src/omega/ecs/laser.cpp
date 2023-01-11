@@ -15,41 +15,53 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: move_component.cpp
+// File Name: laser.cpp
 // Date File Created: 1/10/2023
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
 
+#include "laser.h"
+#include "omega/core/game.h"
+#include "spritecomponent.h"
 #include "move_component.h"
-#include "entity.h"
+#include "circle_component.h"
+#include "asteroid.h"
 
 namespace omega
 {
-move_component::move_component(entity* owner, s32 update_order) :
-    component(owner, update_order) {}
-
-void move_component::update(f32 delta)
+laser::laser(game* game) : entity(game)
 {
-    if(!math::near_zero(m_angular_speed))
+    auto* sc = new sprite_component(this);
+    sc->set_texture(game->get_texture("assets/sprites/laser.png"));
+
+    auto* mc = new move_component(this);
+    mc->set_forward_speed(800.0f);
+
+    m_circle = new circle_component(this);
+    m_circle->set_radius(11.0f);
+
+}
+
+void laser::update_entity(f32 delta)
+{
+    m_death_timer -= delta;
+    if (m_death_timer <= 0.0f)
     {
-        f32 rot = m_parent->rotation();
-        rot += m_angular_speed * delta;
-        m_parent->set_rotation(rot);
-    }
-
-    if(!math::near_zero(m_forward_speed))
+        OTRACE("Killing laser");
+        set_state(DEAD);
+    } else
     {
-        vec2 pos = m_parent->position();
-        pos += m_parent->forward() * m_forward_speed * delta;
-
-        if(pos.x < 0.0f) pos.x = 998.0f;
-        else if(pos.x > 1000.0f) pos.x = 2.0f;
-
-        if(pos.y < 0.0f) pos.y = 798.0f;
-        else if(pos.y > 800.0f) pos.y = 2.0f;
-
-        m_parent->set_position(pos);
+        for (auto ast : get_game()->get_asteroids())
+        {
+            if (intersect(*m_circle, *(ast->get_circle())))
+            {
+                OTRACE("laser hit asteroid");
+                set_state(DEAD);
+                ast->set_state(DEAD);
+                break;
+            }
+        }
     }
 }
 } // namespace omega

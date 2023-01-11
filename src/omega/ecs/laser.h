@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------------
 //
 // ProjectOmega
-//    Copyright 2022 Matthew Rogers
+//    Copyright 2023 Matthew Rogers
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -15,30 +15,28 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-// File Name: ship.h
-// Date File Created: 10/31/2022
+// File Name: laser.h
+// Date File Created: 1/10/2023
 // Author: Matt
 //
 // ------------------------------------------------------------------------------
 
 #pragma once
 #include "entity.h"
+
 namespace omega
 {
 
-class ship : public entity
+class laser : public entity
 {
 public:
-    ship(class game* game);
+    laser(class game* game);
+
     void update_entity(f32 delta) override;
 
-    void input_entity(const u8* key_state) override;
-
 private:
-    f32 m_laser_cooldown = 0.0f;
-
+    class circle_component* m_circle;
+    f32 m_death_timer = 0.5f;
 };
 
-}
-
-
+} // namespace omega

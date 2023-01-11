@@ -38,7 +38,7 @@ asteroid::asteroid(game* game) : entity(game)
     set_rotation(utl::random::get_float(0.0f, math::two_pi));
 
     sprite_component* sc = new sprite_component(this);
-    sc->set_texture(game->get_texture("assets/asteroid.png"));
+    sc->set_texture(game->get_texture("assets/sprites/asteroid.png"));
 
     move_component* mc = new move_component(this);
     mc->set_forward_speed(150.0f);

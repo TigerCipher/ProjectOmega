@@ -31,7 +31,7 @@ namespace omega
 class background_sprite_component : public sprite_component
 {
 public:
-    background_sprite_component(class entity* parent, s32 draw_order = 10) : sprite_component(parent, draw_order) {}
+    background_sprite_component(class entity* parent, s32 draw_order = 1) : sprite_component(parent, draw_order) {}
 
     void update(f32 delta) override;
     void draw(SDL_Renderer* renderer) override;

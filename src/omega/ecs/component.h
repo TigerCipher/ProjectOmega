@@ -30,14 +30,15 @@ class entity;
 
 class component
 {
-  public:
+public:
     explicit component(entity* parent, s32 update_order = 100);
     virtual ~component();
 
     virtual void update(f32 delta);
+    virtual void process_input(const u8* key_state) {}
     s32          get_update_order() const { return m_update_order; }
 
-  protected:
+protected:
     entity* m_parent;
     s32     m_update_order;
 };

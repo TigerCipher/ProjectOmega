@@ -49,14 +49,19 @@ class entity
 
     virtual void update_entity(f32 delta);
 
+    void process_input(const u8* key_state);
+
+    virtual void input_entity(const u8* key_state) {}
+
     void add_component(component* comp);
     void remove_component(component* comp);
 
     state get_state() const { return m_state; }
+    void set_state(state state) { m_state = state; }
 
     game* get_game() const { return m_game; }
 
-    vec2 position() const { return m_position; }
+    const vec2& position() const { return m_position; }
     f32  scale() const { return m_scale; }
     f32  rotation() const { return m_rotation; }
 

@@ -22,9 +22,13 @@
 // ------------------------------------------------------------------------------
 
 #include "ship.h"
+#include "spritecomponent.h"
 #include "anim_sprite_component.h"
+#include "input_component.h"
 #include "omega/core/game.h"
+#include "laser.h"
 #include <SDL.h>
+
 
 namespace omega
 {
@@ -32,46 +36,41 @@ namespace omega
 
 ship::ship(game* game) : entity(game)
 {
-    auto* asc = new anim_sprite_component(this);
+    //    auto* asc = new anim_sprite_component(this);
+    //
+    //    utl::vector<SDL_Texture*> anims = {
+    //        game->get_texture("./assets/sprites/ship01.png"),
+    //        game->get_texture("./assets/sprites/ship02.png"),
+    //        game->get_texture("./assets/sprites/ship03.png"),
+    //        game->get_texture("./assets/sprites/ship04.png"),
+    //    };
+    //    asc->set_textures(anims);
 
-    utl::vector<SDL_Texture*> anims = {
-        game->get_texture("./assets/sprites/ship01.png"),
-        game->get_texture("./assets/sprites/ship02.png"),
-        game->get_texture("./assets/sprites/ship03.png"),
-        game->get_texture("./assets/sprites/ship04.png"),
-    };
-    asc->set_textures(anims);
+    auto* sc = new sprite_component(this, 150);
+    sc->set_texture(game->get_texture("assets/sprites/new_ship.png"));
+
+    auto* ic = new input_component(this);
+    ic->set_key_forward(SDL_SCANCODE_W);
+    ic->set_key_back(SDL_SCANCODE_S);
+    ic->set_key_cw(SDL_SCANCODE_A);
+    ic->set_key_ccw(SDL_SCANCODE_D);
+    ic->set_max_forward_speed(300.0f);
+    ic->set_max_angular_speed(math::two_pi);
 }
 
 void ship::update_entity(f32 delta)
 {
-    entity::update_entity(delta);
-    vec2 pos = position();
-    pos.x += m_right_speed * delta;
-    pos.y += m_down_speed * delta;
-
-    if (pos.x < 25.0f)
-        pos.x = 25.0f;
-    else if (pos.x > 500.0f)
-        pos.x = 500.0f;
-    if (pos.y < 25.0f)
-        pos.y = 25.0f;
-    else if (pos.y > 743.0f)
-        pos.y = 743.0f;
-
-    set_position(pos);
+    m_laser_cooldown -= delta;
 }
-void ship::process_keyboard(const u8* state)
+void ship::input_entity(const u8* key_state)
 {
-    m_right_speed = 0;
-    m_down_speed  = 0;
-    if (state [ SDL_SCANCODE_D ])
-        m_right_speed += 250.0f;
-    if (state [ SDL_SCANCODE_A ])
-        m_right_speed -= 250.0f;
-    if (state [ SDL_SCANCODE_S ])
-        m_down_speed += 300.0f;
-    if (state [ SDL_SCANCODE_W ])
-        m_down_speed -= 300.0f;
+    if (key_state [ SDL_SCANCODE_SPACE ] && m_laser_cooldown <= 0.0f)
+    {
+        OTRACE("Shooting laser");
+        auto* lsr = new laser(get_game());
+        lsr->set_position(position());
+        lsr->set_rotation(rotation());
+        m_laser_cooldown = 0.5f;
+    }
 }
 } // namespace omega

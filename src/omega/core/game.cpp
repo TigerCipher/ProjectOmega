@@ -80,7 +80,8 @@ bool game::initialize()
     // Load game data
     m_ship = new ship(this);
     m_ship->set_position({100.0f, 384.0f});
-    m_ship->set_scale(1.5f);
+    m_ship->set_rotation(math::half_pi);
+//    m_ship->set_scale(1.5f);
 
     auto* temp = new entity(this);
     temp->set_position({512, 384});
@@ -213,7 +214,12 @@ void game::process_input()
     if (key_state [ SDL_SCANCODE_ESCAPE ])
         m_running = false;
 
-    m_ship->process_keyboard(key_state);
+    m_updating_entities = true;
+    for(auto ent : m_entities)
+    {
+        ent->process_input(key_state);
+    }
+    m_updating_entities = false;
 }
 
 void game::update()
@@ -261,7 +267,7 @@ void game::update()
 
 void game::render()
 {
-    SDL_SetRenderDrawColor(m_renderer, 52, 15, 15, 255);
+    SDL_SetRenderDrawColor(m_renderer, 15, 15, 15, 255);
     SDL_RenderClear(m_renderer);
 
 

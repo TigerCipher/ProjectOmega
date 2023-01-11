@@ -81,4 +81,14 @@ void entity::remove_component(component* comp)
     if (const auto it = std::ranges::find(m_components, comp); it != m_components.end())
         m_components.erase(it);
 }
+void entity::process_input(const u8* key_state)
+{
+    if (m_state != ACTIVE)
+        return;
+    for (auto comp : m_components)
+    {
+        comp->process_input(key_state);
+    }
+    input_entity(key_state);
+}
 } // namespace omega
